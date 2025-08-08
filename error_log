@@ -1,0 +1,18 @@
+[22-Mar-2022 12:20:53 UTC] PHP Parse error:  syntax error, unexpected end of file in /home/neotericschools/public_html/aghosh.gptech.pk/feedefaulterlist.php on line 233
+[30-Mar-2023 08:07:32 UTC] PHP Warning:  Unknown: Input variables exceeded 1000. To increase the limit change max_input_vars in php.ini. in Unknown on line 0
+[06-Nov-2023 13:03:24 Asia/Karachi] PHP Warning:  mysqli_fetch_array() expects parameter 1 to be mysqli_result, bool given in /home/neotericschools/public_html/aghosh.gptech.pk/include/coordinator/header-top.php on line 8
+[22-Mar-2024 06:59:27 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/neotericschools/public_html/aghosh.gptech.pk/PHPMailer/PHPMailerAutoload.php on line 45
+[22-Mar-2024 07:01:13 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/neotericschools/public_html/aghosh.gptech.pk/PHPMailer/PHPMailerAutoload.php on line 45
+[22-Mar-2024 07:03:38 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/neotericschools/public_html/aghosh.gptech.pk/PHPMailer/PHPMailerAutoload.php on line 45
+[23-Mar-2024 12:55:07 UTC] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/neotericschools/public_html/aghosh.gptech.pk/bankdeposit.php on line 219
+[23-Mar-2024 12:55:09 UTC] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/neotericschools/public_html/aghosh.gptech.pk/bankdeposit.php on line 219
+[23-Mar-2024 12:55:10 UTC] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /home/neotericschools/public_html/aghosh.gptech.pk/bankdeposit.php on line 219
+[30-Jun-2024 10:14:00 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/neotericschools/public_html/aghosh.gptech.pk/PHPMailer/PHPMailerAutoload.php on line 45
+[30-Jun-2024 10:17:29 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/neotericschools/public_html/aghosh.gptech.pk/PHPMailer/PHPMailerAutoload.php on line 45
+[30-Jun-2024 10:17:41 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/neotericschools/public_html/aghosh.gptech.pk/PHPMailer/PHPMailerAutoload.php on line 45
+[27-Aug-2024 05:52:39 UTC] PHP Warning:  Illegal string offset 'data' in /home/neotericschools/public_html/aghosh.gptech.pk/wa.php on line 34
+[27-Aug-2024 05:52:39 UTC] PHP Warning:  Illegal string offset 'status_code' in /home/neotericschools/public_html/aghosh.gptech.pk/wa.php on line 34
+[15-Sep-2024 14:53:27 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/neotericschools/public_html/aghosh.gptech.pk/PHPMailer/PHPMailerAutoload.php on line 45
+[15-Sep-2024 14:55:35 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/neotericschools/public_html/aghosh.gptech.pk/PHPMailer/PHPMailerAutoload.php on line 45
+[24-Nov-2024 15:17:09 UTC] PHP Warning:  POST Content-Length of 13828948 bytes exceeds the limit of 8388608 bytes in Unknown on line 0
+[21-Jun-2025 22:39:12 UTC] PHP Warning:  Missing boundary in multipart/form-data POST data in Unknown on line 0

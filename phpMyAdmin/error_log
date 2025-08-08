@@ -1,0 +1,56 @@
+[05-Mar-2024 08:23:45 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function iconv_strpos() in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php:512
+Stack trace:
+#0 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/bootstrap.php(64): Symfony\Polyfill\Mbstring\Mbstring::mb_strpos('GRANT USAGE ON ...', ' ON ', 0, 'UTF-8')
+#1 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(44): mb_strpos('GRANT USAGE ON ...', ' ON ')
+#2 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(204): PhpMyAdmin\CheckUserPrivileges->getItemsFromShowGrantsRow('GRANT USAGE ON ...')
+#3 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(328): PhpMyAdmin\CheckUserPrivileges->analyseShowGrant()
+#4 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/Navigation/NavigationTree.php(141): PhpMy in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php on line 512
+[05-Mar-2024 08:23:49 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function iconv_strpos() in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php:512
+Stack trace:
+#0 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/bootstrap.php(64): Symfony\Polyfill\Mbstring\Mbstring::mb_strpos('GRANT USAGE ON ...', ' ON ', 0, 'UTF-8')
+#1 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(44): mb_strpos('GRANT USAGE ON ...', ' ON ')
+#2 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(204): PhpMyAdmin\CheckUserPrivileges->getItemsFromShowGrantsRow('GRANT USAGE ON ...')
+#3 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(328): PhpMyAdmin\CheckUserPrivileges->analyseShowGrant()
+#4 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/Navigation/NavigationTree.php(141): PhpMy in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php on line 512
+[05-Mar-2024 08:23:53 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function iconv_strpos() in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php:512
+Stack trace:
+#0 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/bootstrap.php(64): Symfony\Polyfill\Mbstring\Mbstring::mb_strpos('GRANT USAGE ON ...', ' ON ', 0, 'UTF-8')
+#1 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(44): mb_strpos('GRANT USAGE ON ...', ' ON ')
+#2 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(204): PhpMyAdmin\CheckUserPrivileges->getItemsFromShowGrantsRow('GRANT USAGE ON ...')
+#3 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(328): PhpMyAdmin\CheckUserPrivileges->analyseShowGrant()
+#4 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/Navigation/NavigationTree.php(141): PhpMy in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php on line 512
+[05-Mar-2024 08:23:56 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function iconv_strpos() in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php:512
+Stack trace:
+#0 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/bootstrap.php(64): Symfony\Polyfill\Mbstring\Mbstring::mb_strpos('GRANT USAGE ON ...', ' ON ', 0, 'UTF-8')
+#1 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(44): mb_strpos('GRANT USAGE ON ...', ' ON ')
+#2 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(204): PhpMyAdmin\CheckUserPrivileges->getItemsFromShowGrantsRow('GRANT USAGE ON ...')
+#3 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(328): PhpMyAdmin\CheckUserPrivileges->analyseShowGrant()
+#4 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/Navigation/NavigationTree.php(141): PhpMy in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php on line 512
+[05-Mar-2024 08:24:02 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function iconv_strpos() in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php:512
+Stack trace:
+#0 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/bootstrap.php(64): Symfony\Polyfill\Mbstring\Mbstring::mb_strpos('GRANT USAGE ON ...', ' ON ', 0, 'UTF-8')
+#1 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(44): mb_strpos('GRANT USAGE ON ...', ' ON ')
+#2 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(204): PhpMyAdmin\CheckUserPrivileges->getItemsFromShowGrantsRow('GRANT USAGE ON ...')
+#3 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(328): PhpMyAdmin\CheckUserPrivileges->analyseShowGrant()
+#4 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/Navigation/NavigationTree.php(141): PhpMy in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php on line 512
+[05-Mar-2024 08:24:17 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function iconv_strpos() in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php:512
+Stack trace:
+#0 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/bootstrap.php(64): Symfony\Polyfill\Mbstring\Mbstring::mb_strpos('GRANT USAGE ON ...', ' ON ', 0, 'UTF-8')
+#1 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(44): mb_strpos('GRANT USAGE ON ...', ' ON ')
+#2 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(204): PhpMyAdmin\CheckUserPrivileges->getItemsFromShowGrantsRow('GRANT USAGE ON ...')
+#3 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(328): PhpMyAdmin\CheckUserPrivileges->analyseShowGrant()
+#4 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/Navigation/NavigationTree.php(141): PhpMy in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php on line 512
+[05-Mar-2024 08:35:44 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function iconv_strpos() in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php:512
+Stack trace:
+#0 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/bootstrap.php(64): Symfony\Polyfill\Mbstring\Mbstring::mb_strpos('GRANT USAGE ON ...', ' ON ', 0, 'UTF-8')
+#1 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(44): mb_strpos('GRANT USAGE ON ...', ' ON ')
+#2 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(204): PhpMyAdmin\CheckUserPrivileges->getItemsFromShowGrantsRow('GRANT USAGE ON ...')
+#3 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(328): PhpMyAdmin\CheckUserPrivileges->analyseShowGrant()
+#4 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/Navigation/NavigationTree.php(141): PhpMy in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php on line 512
+[05-Mar-2024 08:36:41 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function iconv_strpos() in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php:512
+Stack trace:
+#0 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/bootstrap.php(64): Symfony\Polyfill\Mbstring\Mbstring::mb_strpos('GRANT USAGE ON ...', ' ON ', 0, 'UTF-8')
+#1 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(44): mb_strpos('GRANT USAGE ON ...', ' ON ')
+#2 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(204): PhpMyAdmin\CheckUserPrivileges->getItemsFromShowGrantsRow('GRANT USAGE ON ...')
+#3 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/CheckUserPrivileges.php(328): PhpMyAdmin\CheckUserPrivileges->analyseShowGrant()
+#4 /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/libraries/classes/Navigation/NavigationTree.php(141): PhpMy in /home/neotericschools/public_html/aghosh.gptech.pk/phpMyAdmin/vendor/symfony/polyfill-mbstring/Mbstring.php on line 512

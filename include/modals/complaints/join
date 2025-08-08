@@ -1,0 +1,34 @@
+<div class="panel-body">
+				<div class="form-group mt-sm">
+					<label class="col-md-3 control-label">Leave Type <span class="required">*</span></label>
+					<div class="col-md-9">
+						<select class="form-control" required title="Must Be Required" data-plugin-selectTwo data-width="100%" data-minimum-results-for-search="Infinity" name="id_cat">
+							<option value="">Select</option>';
+								$sqllmscls	= $dblms->querylms("SELECT cat_id, cat_name 
+													FROM ".LEAVE_CATEGORY."
+													WHERE id_campus = '".$_SESSION['userlogininfo']['LOGINCAMPUS']."' 
+													ORDER BY cat_name ASC");
+								while($valuecls = mysqli_fetch_array($sqllmscls)) {
+							echo '<option value="'.$valuecls['cat_id'].'">'.$valuecls['cat_name'].'</option>';
+							}
+						echo '
+						</select>
+					</div>
+				</div>
+				
+				
+		Join		
+				$sqllms	= $dblms->querylms("SELECT f.id, f.status, f.dated, f.id_class, f.id_section, f.id_session,
+								   c.class_name, cs.section_name, s.session_name,
+								   d.amount, d.duration, d.type,
+								   fc.cat_name
+								   FROM ".FEESETUP." f
+								   								   
+								   INNER JOIN ".CLASSES." c ON c.class_id = f.id_class	 	
+								   INNER JOIN ".CLASS_SECTIONS." cs ON cs.section_id = f.id_section							 
+								   INNER JOIN ".SESSIONS." s ON s.session_id = f.id_session							 
+								   INNER JOIN ".FEESETUPDETAIL." d ON d.id_setup = f.id						 
+								   INNER JOIN ".FEE_CATEGORY." fc ON fc.cat_id = d.id_cat
+								   
+								   WHERE f.id_campus = '".$_SESSION['userlogininfo']['LOGINCAMPUS']."'  
+								   ORDER BY f.dated ASC");
