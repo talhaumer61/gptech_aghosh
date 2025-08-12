@@ -372,6 +372,8 @@ Aghosh Complex';
 
 //	Single Fee Challans Genrate
 if(isset($_POST['one_challan_generate'])){ 
+	// echo '<pre>';
+	// print_r($_POST);exit;
 	
 	if($_POST['is_orphan'] != 1 && $_POST['is_orphan_approved'] != 1 && $_POST['total_amount'] > 0){			   
 		//------------------------Reformat Date------------------------
@@ -471,15 +473,17 @@ if(isset($_POST['one_challan_generate'])){
 																		, '".cleanvars($_POST['amount'][$i])."'			
 																	)
 															");
-														
-						if($_POST['id_cat'][$i] == 17){
+						if($_POST['id_cat'][$i] == 13 || $_POST['id_cat'][$i] == 14){
+							$totalAmount += 0;
+						}								
+						elseif($_POST['id_cat'][$i] == 17){
 							$totalAmount = $totalAmount - $_POST['amount'][$i];
 						}else{
 							$totalAmount = $totalAmount + $_POST['amount'][$i];
 						}	
 					}
 				}
-				
+				// echo $totalAmount;exit;
 				//	PREVIOUS CHALLANS AMOUNT AND FINE
 				// $rem_challan = cleanvars($_POST['rem_challan']);
 				// $prev_challans = cleanvars($_POST['prev_challans']);

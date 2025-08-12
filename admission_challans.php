@@ -314,6 +314,7 @@ if(($_SESSION['userlogininfo']['LOGINTYPE'] == 1) || Stdlib_Array::multiSearch($
                                                 <th width="90px;">Paid Date</th>
                                                 <th width="70px;" class="center">Status</th>
                                                 <th>Total</th>
+                                                <th>Paid</th>
                                                 <th>Remaining</th>
                                                 <th width="130" class="center">Options</th>
                                             </tr>
@@ -364,6 +365,7 @@ if(($_SESSION['userlogininfo']['LOGINTYPE'] == 1) || Stdlib_Array::multiSearch($
                                                     <td>'.$paidDate.'</td>
                                                     <td class="center">'.get_payments($rowsvalues['status']).'</td>
                                                     <td>'.number_format(round($granTotal)).'</td>
+                                                    <td>'.number_format(round($rowsvalues['paid_amount'])).'</td>
                                                     <td class="center">'.(($pendingAmount>0)?number_format(round($pendingAmount)):"N/A").'</td>
                                                     <td class="center">';
                                                         if($rowsvalues['status'] != '1'){

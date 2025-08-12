@@ -199,7 +199,7 @@ echo'
 									}
 
 									if($feercord['due_date'] < date('Y-m-d') && $feercord['status'] != '1'){
-										$amount = $amount;
+										$amount = $amount + LATEFEE;
 									}
 									echo'
 									<tr>

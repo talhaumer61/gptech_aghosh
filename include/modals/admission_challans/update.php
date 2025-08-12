@@ -32,11 +32,10 @@ if(($_SESSION['userlogininfo']['LOGINTYPE']  == 1) || Stdlib_Array::multiSearch(
 	if($rowsvalues['std_name']){ $stdName = $rowsvalues['std_name'];} else {$stdName = $rowsvalues['name'];}
 
 	// $total_fee = $rowsvalues['total_amount'];
+	$fineAmount =0;
 	if(date('Y-m-d') > $rowsvalues['due_date']) {
-		$granTotal = $rowsvalues['total_amount'] + 300;
-	} else {
-		$granTotal = $rowsvalues['total_amount'];
-	}
+		$fineAmount += 300;
+	} 
 echo '
 <script src="assets/javascripts/user_config/forms_validation.js"></script>
 <script src="assets/javascripts/theme.init.js"></script>
@@ -86,21 +85,7 @@ echo '
 			<div class="form-group">
 				<div class="col-md-12">
 					<div class="row clearfix">
-						<div class="col-md-4">
-							<div class="form-group">
-								<div class="col-md-12">
-									<label class="control-label">Month <span class="required">*</span></label>
-									<select class="form-control" data-plugin-selectTwo data-width="100%" data-minimum-results-for-search="Infinity" name="id_month" name="id_month" required>
-										<option value="">Select</option>';
-										foreach($monthtypes as $month){
-											echo'<option value="'.$month['id'].'" '.($month['id'] == $rowsvalues['id_month'] ? 'selected' : '').'>'.$month['name'].'</option>';
-										}
-										echo '
-									</select>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-4">
+						<div class="col-md-6">
 							<div class="form-group">
 								<div class="col-md-12">
 									<label class=control-label">Issue Date <span class="required">*</span></label>
@@ -108,7 +93,7 @@ echo '
 								</div>
 							</div>
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-6">
 							<div class="form-group">
 								<div class="col-md-12">
 									<label class=control-label">Due Date <span class="required">*</span></label>
@@ -145,7 +130,7 @@ echo '
 											<div class="col-md-12">
 												<label class=control-label">'.$rowdoc['cat_name'].' <span class="required">*</span></label>
 												<input type="hidden" name="id[]" value="'.$valuefeeprt['id'].'">
-												<input type="number" id="amount" name="amount[]" class="form-control cats" required title="Must Be Required" value="'.$valuefeeprt['amount'].'"/>
+												<input type="number" id="amount" name="amount[]" class="form-control cats" required title="Must Be Required" value="'.$valuefeeprt['amount'].'" disabled/>
 											</div>
 										</div>
 									</div>
@@ -174,40 +159,39 @@ echo '
 			//-----------------------------------------------------
 			echo'
 			<div class="form-group">';
-				$onlineTotalPaid = 0;
-				if($onlinePaid['total_paid'] > 0){
-					$col = "col-md-3";
-					echo'
-					<div class="'.$col.'">
-						<label class="control-label">Partial Paid </label>
-						<input type="text" id="partial_paid" name="partial_paid" value="'.$onlinePaid['total_paid'].'" class="form-control" readonly/>
-					</div>';
-					$onlineTotalPaid = $onlinePaid['total_paid'];
-				}else{
-					$col = "col-md-4";
-				}
 				//---------------------------------
-				$totalAmount = $rowsvalues['total_amount'] - $onlineTotalPaid;
+				$totalAmount = $rowsvalues['total_amount'];
+				$partialPaid = $rowsvalues['paid_amount'];
+				$granTotal = $totalAmount + $fineAmount;
+				$remainingAmount = $granTotal - $partialPaid;
 				//---------------------------------
 				echo'
-				<div class="'.$col.'">
-					<label class="control-label">Payable <span class="required">*</span></label>
-					<input type="hidden" id="payable" name="total_amount" class="total totalPayable"  required title="Must Be Required" value="'.$totalAmount.'" readonly/>
-					<input type="text" id="" name="payable" class="form-control total totalPayable" required title="Must Be Required" value="'.$granTotal.'" readonly/>
+				<div class="col-md-6">
+					<label class="control-label">Total <span class="required">*</span></label>
+					<input type="text" id="payable" name="total_amount" class="total totalPayable form-control"  required title="Must Be Required" value="'.(($fineAmount>0)?$totalAmount:$granTotal).'" readonly/>
+				</div>';
+				if($fineAmount > 0) {
+					echo'
+					<div class="col-md-6">
+						<label class="control-label">Fine Amount </label>
+						<input type="text" id="fine_amount" name="fine_amount" value="'.$fineAmount.'" class="form-control" readonly/>
+					</div>
+					<div class="col-md-12">
+						<label class="control-label">Total Payable </label>
+						<input type="text" id="fine_amount" name="fine_amount" value="'.$granTotal.'" class="form-control" readonly/>
+					</div>
+					';
+				}
+				echo'
+				
+				<div class="col-md-6">
+					<label class="control-label">Partial Paid </label>
+					<input type="text" id="partial_paid" name="partial_paid" value="'.$partialPaid.'" class="form-control" readonly/>
 				</div>
-				<div class="'.$col.'">
-					<label class="control-label">Pay Mode </label>
-					<select class="form-control" data-plugin-selectTwo data-width="100%" data-minimum-results-for-search="Infinity" name="pay_mode" name="pay_mode">
-						<option value="">Select</option>';
-						foreach($paymethod as $method){
-							echo'<option value="'.$method['id'].'">'.$method['name'].'</option>';
-						}
-						echo '
-					</select>
-				</div>
-				<div class="'.$col.'">
-					<label class="control-label">Paid Date </label>
-					<input type="text" id="paid_date" name="paid_date" class="form-control" value="'.date('m/d/Y' , strtotime(date('Y-m-d'))).'" data-plugin-datepicker title="Must Be Required" />
+				
+				<div class="col-md-6">
+					<label class="control-label">Remaining </label>
+					<input type="text" id="partial_paid" name="partial_paid" value="'.$remainingAmount.'" class="form-control" readonly/>
 				</div>
 			</div>
 
