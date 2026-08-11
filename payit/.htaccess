@@ -1,0 +1,7 @@
+RewriteOptions inherit
+
+RewriteRule ^([a-zA-Z0-9_-]+)$ index.php?controller=$1
+RewriteRule ^([a-zA-Z0-9_-]+)/$ index.php?controller=$1
+
+RewriteRule ^(.*)\.html$ $1.php
+RewriteRule ^index index.php

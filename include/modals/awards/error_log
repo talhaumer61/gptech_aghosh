@@ -1,0 +1,8 @@
+[05-Mar-2020 15:53:39 Asia/Karachi] PHP Notice:  Undefined index: id_class in /home3/s3tgo351/public_html/cms.laurelhomeschools.edu.pk/include/modals/awards/modal_award_update.php on line 97
+[05-Mar-2020 15:53:39 Asia/Karachi] PHP Notice:  Undefined index: id_class in /home3/s3tgo351/public_html/cms.laurelhomeschools.edu.pk/include/modals/awards/modal_award_update.php on line 97
+[05-Mar-2020 15:53:39 Asia/Karachi] PHP Notice:  Undefined index: id_class in /home3/s3tgo351/public_html/cms.laurelhomeschools.edu.pk/include/modals/awards/modal_award_update.php on line 97
+[05-Mar-2020 15:53:39 Asia/Karachi] PHP Warning:  mysqli_fetch_array() expects parameter 1 to be mysqli_result, boolean given in /home3/s3tgo351/public_html/cms.laurelhomeschools.edu.pk/include/modals/awards/modal_award_update.php on line 117
+[05-Mar-2020 16:06:41 Asia/Karachi] PHP Notice:  Undefined index: id_class in /home3/s3tgo351/public_html/cms.laurelhomeschools.edu.pk/include/modals/awards/modal_award_update.php on line 97
+[05-Mar-2020 16:06:41 Asia/Karachi] PHP Notice:  Undefined index: id_class in /home3/s3tgo351/public_html/cms.laurelhomeschools.edu.pk/include/modals/awards/modal_award_update.php on line 97
+[05-Mar-2020 16:06:41 Asia/Karachi] PHP Notice:  Undefined index: id_class in /home3/s3tgo351/public_html/cms.laurelhomeschools.edu.pk/include/modals/awards/modal_award_update.php on line 97
+[05-Mar-2020 16:06:41 Asia/Karachi] PHP Warning:  mysqli_fetch_array() expects parameter 1 to be mysqli_result, boolean given in /home3/s3tgo351/public_html/cms.laurelhomeschools.edu.pk/include/modals/awards/modal_award_update.php on line 117

@@ -1,0 +1,4 @@
+FirstName,LastName,Birthday,Gender,GuardianEmail,Phone,CategoryName,Roll,AdmissionDate,Email,Password
+Shimul,Roy,20/01/1994,male,example@parent.com,1452366515,general,100,16/02/2017,example@student.com,1234
+Palash,Roy,20/01/1994,male,example2@parent.com,285654886,general,101,16/02/2017,example2@student.com,1234
+Samuel,Bale,12/3/97,female,example3@parent.com,90786534,general,123,17/08/2017,example3@student.com,123435
