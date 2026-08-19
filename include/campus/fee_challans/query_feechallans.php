@@ -117,13 +117,20 @@ if(isset($_POST['challans_generate'])){
                             } else if($valCat['cat_id'] == 14){
                                     //----------------------------Fine-------------------------
                                     $month = $idmonth - 1;
+                                    // $sql_fine	= $dblms->querylms("SELECT SUM(amount) as fine
+                                    //                                     FROM ".SCHOLARSHIP." 
+                                    //                                     WHERE id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
+                                    //                                     AND  id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'
+                                    //                                     AND  id_type = '3' AND status = '1' AND is_deleted != '1'
+                                    //                                     AND  id_std = '".$value_std['std_id']."'
+                                    //                                     AND  MONTH(date) IN ('".$month."', '".$idmonth."') ");
                                     $sql_fine	= $dblms->querylms("SELECT SUM(amount) as fine
                                                                         FROM ".SCHOLARSHIP." 
                                                                         WHERE id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
                                                                         AND  id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'
                                                                         AND  id_type = '3' AND status = '1' AND is_deleted != '1'
                                                                         AND  id_std = '".$value_std['std_id']."'
-                                                                        AND  MONTH(date) IN ('".$month."', '".$idmonth."') ");
+                                                                        AND (challan_no IS NULL OR TRIM(challan_no) = '')");
                                     //---------------- Fine Amount ------------------------
                                     $values_fine = 	mysqli_fetch_array($sql_fine);
                                     //-----------------------------------------------------
@@ -359,241 +366,410 @@ if(isset($_POST['challans_generate'])){
 } 
 
 //	Single Fee Challans Genrate
-if(isset($_POST['one_challan_generate'])){ 
-	
-	if($_POST['is_orphan'] != 1 && $_POST['is_orphan_approved'] != 1 && $_POST['total_amount'] > 0){			   
-		//------------------------Reformat Date------------------------
-		$challandate= substr(date('Y'),2,4);
-		$issue_date	= date('Y-m-d' , strtotime(cleanvars($_POST['issue_date'])));
-		$due_date 	= date('Y-m-d' , strtotime(cleanvars($_POST['due_date'])));
-		$yearmonth 	= date('Y-m', strtotime(cleanvars($_POST['yearmonth'])));
-		$year 		= date('y', strtotime(cleanvars($_POST['yearmonth'])));
-		$idmonth 	= date('n', strtotime(cleanvars($_POST['yearmonth'])));
-		//------------------------------------------------	
+if (isset($_POST['one_challan_generate'])) { 
 
-		//-------- If Challan Not Exsist Then Genrate ---------
-		$sqllmscheck  = $dblms->querylms("SELECT id_std
-											FROM ".FEES." 
-											WHERE	id_std	=	'".cleanvars($_POST['id_std'])."'
-											AND	yearmonth	=	'".cleanvars($yearmonth)."'
-											AND is_deleted	=	'0'
-										");	
-		if(mysqli_num_rows($sqllmscheck) == 0){
+    $isOrphan = isset($_POST['is_orphan']) ? (int)$_POST['is_orphan'] : 0;
+    $isOrphanApproved = isset($_POST['is_orphan_approved']) ? (int)$_POST['is_orphan_approved'] : 0;
+    $totalAmountInput = isset($_POST['total_amount']) ? (float)$_POST['total_amount'] : 0;
 
-			// challan no
-			do {
-				$challano = '9930'.$year.mt_rand(10000,99999);
-				$sqlChallan	= "SELECT challan_no FROM sms_fees WHERE challan_no = '$challano'";
-				$sqlCheck	= $dblms->querylms($sqlChallan);
-			} while (mysqli_num_rows($sqlCheck) > 0);
+    if ($isOrphan != 1 && $isOrphanApproved != 1 && $totalAmountInput > 0) { 
+        
+        //------------------------Reformat Date------------------------
+        $issue_date = date('Y-m-d', strtotime(cleanvars($_POST['issue_date'])));
+        $due_date   = date('Y-m-d', strtotime(cleanvars($_POST['due_date'])));
+        $yearmonth  = date('Y-m', strtotime(cleanvars($_POST['yearmonth'])));
+        $year       = date('y', strtotime(cleanvars($_POST['yearmonth'])));
+        $idmonth    = (int)date('n', strtotime(cleanvars($_POST['yearmonth'])));
+        $current_year = date('Y', strtotime(cleanvars($_POST['yearmonth'])));
+        $id_std     = cleanvars($_POST['id_std']);
+        $campus_id  = cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS']);
+        $session_id = cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION']);
+        $login_ida  = cleanvars($_SESSION['userlogininfo']['LOGINIDA']);
+        //------------------------------------------------ 
 
-			//----------------------------Fine-------------------------
-			$month = ($idmonth - 1);
-			$sql_fine	= $dblms->querylms("SELECT SUM(amount) as fine
-												FROM ".SCHOLARSHIP." 
-												WHERE id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
-												AND id_type = '3' AND status = '1' AND is_deleted != '1'
-												AND id_std = '".cleanvars($_POST['id_std'])."' AND challan_no = ''
-												AND  MONTH(date) IN ('".$month."', '".$idmonth."') ");
-			$values_fine = 	mysqli_fetch_array($sql_fine);
+        //-------- If Challan Not Exist Then Generate ---------
+        $sqllmscheck = $dblms->querylms("SELECT id_std
+                                           FROM ".FEES." 
+                                          WHERE id_std    = '".$id_std."'
+                                            AND yearmonth = '".$yearmonth."'
+                                            AND is_deleted = '0'"); 
 
-			//---------------------- Make -------------------------
-			$sqllms  = $dblms->querylms("INSERT INTO ".FEES."(
-																  status
-																, id_type
-																, challan_no 
-																, id_session 
-																, id_month
-																, yearmonth
-																, id_class 
-																, id_section
-																, id_std
-																, issue_date
-																, due_date
-																, note 
-																, id_campus
-																, id_added
-																, date_added
-															)
-														VALUES(
-																  '2'
-																, '2'
-																, '".cleanvars($challano)."'
-																, '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."' 
-																, '".cleanvars($idmonth)."'
-																, '".cleanvars($yearmonth)."'
-																, '".cleanvars($_POST['id_class'])."'
-																, '".cleanvars($_POST['id_section'])."'
-																, '".cleanvars($_POST['id_std'])."'
-																, '".cleanvars($issue_date)."' 
-																, '".cleanvars($due_date)."'
-																, '".cleanvars($_POST['note'])."'
-																, '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."'
-																, '".cleanvars($_SESSION['userlogininfo']['LOGINIDA'])."'
-																, Now()	
-															)"
-													);
+        if (mysqli_num_rows($sqllmscheck) == 0) {
 
-			//-------------------------Fee Particulars Detail-----------------------
-			if($sqllms) { 
-				//----------------- Get latest Id -------------------- 
-				$idsetup = $dblms->lastestid();	
-				//--------------------------------
-				$concession = 0;
-				$totalAmount = 0;
-				// $payable = 0;
-				//--------------------------------------
-				for($i=1; $i<= count($_POST['id_cat']); $i++){
-					if($_POST['amount'][$i] > 0) {
-						$sqllmsPart = $dblms->querylms("INSERT INTO ".FEE_PARTICULARS."(
-																		  id_fee
-																		, id_cat
-																		, amount						
-																	)
-																VALUES(
-																		  '".cleanvars($idsetup)."'
-																		, '".cleanvars($_POST['id_cat'][$i])."'
-																		, '".cleanvars($_POST['amount'][$i])."'			
-																	)
-															");
-														
-						if($_POST['id_cat'][$i] == 17){
-							$totalAmount = $totalAmount - $_POST['amount'][$i];
-						}else{
-							$totalAmount = $totalAmount + $_POST['amount'][$i];
-						}	
-					}
-				}
-				
-				//	PREVIOUS CHALLANS AMOUNT AND FINE
-				// $rem_challan = cleanvars($_POST['rem_challan']);
-				// $prev_challans = cleanvars($_POST['prev_challans']);
-				// $narration = $prev_challans.','.$rem_challan;
-				// $prev_remaining_amount = cleanvars($_POST['prev_total']);
+            // Generate unique challan no
+            do {
+                $challano  = '9930' . $year . mt_rand(10000, 99999);
+                $sqlChallan = "SELECT challan_no FROM ".FEES." WHERE challan_no = '$challano'";
+                $sqlCheck   = $dblms->querylms($sqlChallan);
+            } while (mysqli_num_rows($sqlCheck) > 0);
 
-				//------------ Update Total Amount ----------------
+            //----------------------------Fine Current Month Handling-------------------------
+            // Check ONLY for unlinked fines in the specific year-month selected
+            $sql_fine = $dblms->querylms("SELECT SUM(amount) as fine
+                                            FROM ".SCHOLARSHIP." 
+                                           WHERE id_campus  = '".$campus_id."' 
+                                             AND id_type    = '3' 
+                                             AND status     = '1' 
+                                             AND is_deleted != '1'
+                                             AND id_std     = '".$id_std."' 
+                                             AND (challan_no IS NULL OR challan_no = '' OR challan_no = '0')
+                                             AND MONTH(date) = '".$idmonth."' 
+                                             AND YEAR(date)  = '".$current_year."'");
+            $values_fine = mysqli_fetch_array($sql_fine);
 
-                if($_POST['whatsappno']) {
-					$sqlStudent = $dblms->querylms("SELECT std_name FROM ".STUDENTS." WHERE std_id = '".$_POST['id_std']."' LIMIT 1");
-					$studentData = mysqli_fetch_assoc($sqlStudent);
-					$studentName = isset($studentData['std_name']) ? $studentData['std_name'] : 'Student';
+            //---------------------- Insert Master Fee Record -------------------------
+            $sqllms = $dblms->querylms("INSERT INTO ".FEES." (
+                                            status, id_type, challan_no, id_session, id_month,
+                                            yearmonth, id_class, id_section, id_std, issue_date,
+                                            due_date, note, id_campus, id_added, date_added
+                                        ) VALUES (
+                                            '2', '2', '".$challano."', '".$session_id."', '".$idmonth."',
+                                            '".$yearmonth."', '".cleanvars($_POST['id_class'])."', '".cleanvars($_POST['id_section'])."',
+                                            '".$id_std."', '".$issue_date."', '".$due_date."', '".cleanvars($_POST['note'])."',
+                                            '".$campus_id."', '".$login_ida."', NOW()
+                                        )");
 
-                    if($_POST['idclassgroup'] == 3) {
-                        $challanprefix 	= 1000014000;
-                    } else {
-                        $challanprefix 	= 1000014011;
+            //-------------------------Fee Particulars Detail-----------------------
+            if ($sqllms) { 
+                $idsetup = $dblms->lastestid(); 
+                $calculatedTotal = 0;
+
+                if (isset($_POST['id_cat']) && is_array($_POST['id_cat'])) {
+                    foreach ($_POST['id_cat'] as $i => $cat_id) {
+                        $amt = isset($_POST['amount'][$i]) ? (float)$_POST['amount'][$i] : 0;
+                        
+                        if ($amt > 0) {
+                            $clean_cat = cleanvars($cat_id);
+                            $clean_amt = cleanvars($amt);
+
+                            $dblms->querylms("INSERT INTO ".FEE_PARTICULARS." (id_fee, id_cat, amount) 
+                                              VALUES ('".$idsetup."', '".$clean_cat."', '".$clean_amt."')");
+                            
+                            if ($clean_cat == 17) {
+                                $calculatedTotal -= $amt; // Concession category
+                            } else {
+                                $calculatedTotal += $amt;
+                            }
+                        }
                     }
-                    $challanNumber = $challanprefix.substr($challano, -7);
-                   $msgs = "Dear " . $studentName . "\n" .
-							"Kindly ensure to submit your school fee payment month of " . get_monthtypes($idmonth) . "-" . date('Y', strtotime($issue_date)) . " before due date to avoid any inconvenience. If the school fee is not paid by due date " . date('d-m-Y', strtotime($due_date)) . " fine Rs 300 will be imposed with monthly fee.\n\n" .
-							"Scan to Pay from Any Mobile Banking App\n" .
-							"Challan Number: " . $challano . "\n" .
-							"Challan Amount Rs. " . number_format($totalAmount) . "/-\n" .
-							"https://aghosh.gptech.pk/raast_qr.php?challanNo=" . get_dataHashingOnlyExp($challano, true) . "\n\n" .
-							"Regards:\n" . 
-							"Accounts Department\n" .
-							"Aghosh Complex";
-                    // whatsapp message
-                    $datawa = array(
-                                          'status'         => 0
-                                        , 'dated'           => date("Y-m-d")
-                                        , 'challanno'       => $challano
-                                        , 'amount'          => $totalAmount
-                                        , 'cellno'          => ($_POST['whatsappno'])
-                                        , 'message_type'    => 1
-                                        , 'message'         => $msgs
-                                    );
-                    $querywhtsapp = $dblms->Insert(WHATSAPP_MESSAGES, $datawa);
-
                 }
 
-				$sqllmsUpdate  = $dblms->querylms("UPDATE ".FEES." SET  
-															total_amount	= '".cleanvars($totalAmount)."'
-															WHERE id		= '".$idsetup."'
-													");
+                // WhatsApp Queue Integration
+                if (!empty($_POST['whatsappno'])) {
+                    $sqlStudent = $dblms->querylms("SELECT std_name FROM ".STUDENTS." WHERE std_id = '".$id_std."' LIMIT 1");
+                    $studentData = mysqli_fetch_assoc($sqlStudent);
+                    $studentName = !empty($studentData['std_name']) ? $studentData['std_name'] : 'Student';
 
-				//------------ Update Previous partial Challans as Paid ----------------
-				// $sqllmsUpdatePrev  = $dblms->querylms("UPDATE ".FEES." SET
-				// 											status		= '1'
-				// 											WHERE challan_no IN ($prev_challans)
-				// 											AND status = '4'
-				// 									");
+                    $whatsapp_no = cleanvars($_POST['whatsappno']);
+                    
+                    $msgs = "Dear " . $studentName . "\n" .
+                            "Kindly ensure to submit your school fee payment month of " . get_monthtypes($idmonth) . "-" . date('Y', strtotime($issue_date)) . " before due date to avoid any inconvenience. If the school fee is not paid by due date " . date('d-m-Y', strtotime($due_date)) . " fine Rs 300 will be imposed with monthly fee.\n\n" .
+                            "Scan to Pay from Any Mobile Banking App\n" .
+                            "Challan Number: " . $challano . "\n" .
+                            "Challan Amount Rs. " . number_format($calculatedTotal) . "/-\n" .
+                            "https://aghosh.gptech.pk/raast_qr.php?challanNo=" . get_dataHashingOnlyExp($challano, true) . "\n\n" .
+                            "Regards:\n" . 
+                            "Accounts Department\n" .
+                            "Aghosh Complex";
 
-				//------------ Update Previous pending Challans as UNPAID ----------------
-				// $sqllmsUpdatePrev  = $dblms->querylms("UPDATE ".FEES." SET
-				// 											status		= '3'
-				// 											WHERE challan_no IN ($prev_challans)
-				// 											AND status = '2'
-				// 									");
+                    $datawa = array(
+                        'status'       => 0,
+                        'dated'        => date("Y-m-d"),
+                        'challanno'    => $challano,
+                        'amount'       => $calculatedTotal,
+                        'cellno'       => $whatsapp_no,
+                        'message_type' => 1,
+                        'message'      => $msgs
+                    );
+                    $querywhtsapp = $dblms->Insert(WHATSAPP_MESSAGES, $datawa);
+                }
 
-				//------------ Scholarship Added in Challan ----------------
-				$sqllmsUpdate  = $dblms->querylms("UPDATE ".SCHOLARSHIP." SET  
-														challan_no	= '".cleanvars($challano)."'
-														WHERE id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
-														AND id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'
-														AND id_type = '3' AND status = '1' AND is_deleted != '1'
-														AND id_std = '".cleanvars($_POST['id_std'])."' AND challan_no = ''
-														AND  MONTH(date) IN ('".$month."', '".$idmonth."') ");
+                //------------ Update Calculated Total Amount ----------------
+                $dblms->querylms("UPDATE ".FEES." 
+                                     SET total_amount = '".$calculatedTotal."' 
+                                   WHERE id = '".$idsetup."'");
 
-				//-------------------- Make Log ------------------------
-				$remarks = "Single Fee Challan Genrated";
-				$sqllmslog  = $dblms->querylms("INSERT INTO ".ACCOUNTS_LOGS." (
-															  id_user 
-															, filename 
-															, action
-															, challan_no
-															, dated
-															, ip
-															, remarks 
-															, id_campus				
-														)
+                //------------ Link Fine/Scholarship to Challan (CURRENT MONTH ONLY) ----------------
+                $dblms->querylms("UPDATE ".SCHOLARSHIP." 
+                                     SET challan_no = '".$challano."'
+                                   WHERE id_campus  = '".$campus_id."' 
+                                     AND id_session = '".$session_id."'
+                                     AND id_type    = '3' 
+                                     AND status     = '1' 
+                                     AND is_deleted != '1'
+                                     AND id_std     = '".$id_std."' 
+                                     AND (challan_no IS NULL OR challan_no = '' OR challan_no = '0')
+                                     AND MONTH(date) = '".$idmonth."' 
+                                     AND YEAR(date)  = '".$current_year."'");
 
-													VALUES(
-															  '".cleanvars($_SESSION['userlogininfo']['LOGINIDA'])."'
-															, '".strstr(basename($_SERVER['REQUEST_URI']), '.php', true)."'
-															, '1'
-															, '".cleanvars($challano)."'
-															, NOW()
-															, '".cleanvars($ip)."'
-															, '".cleanvars($remarks)."'
-															, '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."'
-														)
-												");
-			}
-		}
-		else{
-			$_SESSION['msg']['title'] 	= 'Error';
-			$_SESSION['msg']['text'] 	= 'Record Already Exists';
-			$_SESSION['msg']['type'] 	= 'error';
-			header("Location: fee_challans.php", true, 301);
-			exit();
-		}
-		//--------------------------------------
+                //-------------------- Accounts Log ------------------------
+                $remarks = "Single Fee Challan Generated";
+                $client_ip = cleanvars($_SERVER['REMOTE_ADDR'] ?? '');
+                $script_filename = strstr(basename($_SERVER['REQUEST_URI']), '.php', true);
 
-		if($sqllms) { 
-			
-			// Send Message
-			$phone = str_replace("-","",$_POST['std_phone']);
-			$message = 'Dear Parents,'.PHP_EOL.''.PHP_EOL.'Your child fee challan # '.cleanvars($challano).' for the month '.get_monthtypes($idmonth).' of amount '.number_format($totalAmount).' with due date '.date('d-m-Y' , strtotime(cleanvars($_POST['due_date']))).' has been issued.'.PHP_EOL.''.PHP_EOL.'Thanks,'.PHP_EOL.'Aghosh Grammar School';
-			//sendMessage($phone, $message);		
+                $dblms->querylms("INSERT INTO ".ACCOUNTS_LOGS." (
+                                    id_user, filename, action, challan_no, dated, ip, remarks, id_campus
+                                ) VALUES (
+                                    '".$login_ida."', '".$script_filename."', '1', '".$challano."', NOW(), '".$client_ip."', '".$remarks."', '".$campus_id."'
+                                )");
 
-			//--------------------------------------
-			$_SESSION['msg']['title'] 	= 'Successfully';
-			$_SESSION['msg']['text'] 	= 'Record Successfully Added.';
-			$_SESSION['msg']['type'] 	= 'success';
-			header("Location: feechallanprint.php?id=".$challano."", true, 301);
-			exit();
-			//--------------------------------------
-		}
-	}
-	else{
-		$_SESSION['msg']['title'] 	= 'Error';
-		$_SESSION['msg']['text'] 	= 'Challan not genrated.';
-		$_SESSION['msg']['type'] 	= 'error';
-		header("Location: fee_challans.php", true, 301);
-		exit();
-	}	
+                // Success Redirect
+                $_SESSION['msg']['title'] = 'Successfully';
+                $_SESSION['msg']['text']  = 'Record Successfully Added.';
+                $_SESSION['msg']['type']  = 'success';
+                header("Location: feechallanprint.php?id=".$challano, true, 301);
+                exit();
+            }
+        } else {
+            $_SESSION['msg']['title'] = 'Error';
+            $_SESSION['msg']['text']  = 'Record Already Exists';
+            $_SESSION['msg']['type']  = 'error';
+            header("Location: fee_challans.php", true, 301);
+            exit();
+        }
+    } else {
+        $_SESSION['msg']['title'] = 'Error';
+        $_SESSION['msg']['text']  = 'Challan not generated.';
+        $_SESSION['msg']['type']  = 'error';
+        header("Location: fee_challans.php", true, 301);
+        exit();
+    }   
 }
+// if(isset($_POST['one_challan_generate'])){ 
+	
+// 	if($_POST['is_orphan'] != 1 && $_POST['is_orphan_approved'] != 1 && $_POST['total_amount'] > 0){			   
+// 		//------------------------Reformat Date------------------------
+// 		$challandate= substr(date('Y'),2,4);
+// 		$issue_date	= date('Y-m-d' , strtotime(cleanvars($_POST['issue_date'])));
+// 		$due_date 	= date('Y-m-d' , strtotime(cleanvars($_POST['due_date'])));
+// 		$yearmonth 	= date('Y-m', strtotime(cleanvars($_POST['yearmonth'])));
+// 		$year 		= date('y', strtotime(cleanvars($_POST['yearmonth'])));
+// 		$idmonth 	= date('n', strtotime(cleanvars($_POST['yearmonth'])));
+// 		//------------------------------------------------	
+
+// 		//-------- If Challan Not Exsist Then Genrate ---------
+// 		$sqllmscheck  = $dblms->querylms("SELECT id_std
+// 											FROM ".FEES." 
+// 											WHERE	id_std	=	'".cleanvars($_POST['id_std'])."'
+// 											AND	yearmonth	=	'".cleanvars($yearmonth)."'
+// 											AND is_deleted	=	'0'
+// 										");	
+// 		if(mysqli_num_rows($sqllmscheck) == 0){
+
+// 			// challan no
+// 			do {
+// 				$challano = '9930'.$year.mt_rand(10000,99999);
+// 				$sqlChallan	= "SELECT challan_no FROM sms_fees WHERE challan_no = '$challano'";
+// 				$sqlCheck	= $dblms->querylms($sqlChallan);
+// 			} while (mysqli_num_rows($sqlCheck) > 0);
+
+// 			//----------------------------Fine-------------------------
+// 			$month = ($idmonth - 1);
+// 			$sql_fine	= $dblms->querylms("SELECT SUM(amount) as fine
+// 												FROM ".SCHOLARSHIP." 
+// 												WHERE id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
+// 												AND id_type = '3' AND status = '1' AND is_deleted != '1'
+// 												AND id_std = '".cleanvars($_POST['id_std'])."' AND challan_no = ''
+// 												AND  MONTH(date) IN ('".$month."', '".$idmonth."') ");
+// 			$values_fine = 	mysqli_fetch_array($sql_fine);
+
+// 			//---------------------- Make -------------------------
+// 			$sqllms  = $dblms->querylms("INSERT INTO ".FEES."(
+// 																  status
+// 																, id_type
+// 																, challan_no 
+// 																, id_session 
+// 																, id_month
+// 																, yearmonth
+// 																, id_class 
+// 																, id_section
+// 																, id_std
+// 																, issue_date
+// 																, due_date
+// 																, note 
+// 																, id_campus
+// 																, id_added
+// 																, date_added
+// 															)
+// 														VALUES(
+// 																  '2'
+// 																, '2'
+// 																, '".cleanvars($challano)."'
+// 																, '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."' 
+// 																, '".cleanvars($idmonth)."'
+// 																, '".cleanvars($yearmonth)."'
+// 																, '".cleanvars($_POST['id_class'])."'
+// 																, '".cleanvars($_POST['id_section'])."'
+// 																, '".cleanvars($_POST['id_std'])."'
+// 																, '".cleanvars($issue_date)."' 
+// 																, '".cleanvars($due_date)."'
+// 																, '".cleanvars($_POST['note'])."'
+// 																, '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."'
+// 																, '".cleanvars($_SESSION['userlogininfo']['LOGINIDA'])."'
+// 																, Now()	
+// 															)"
+// 													);
+
+// 			//-------------------------Fee Particulars Detail-----------------------
+// 			if($sqllms) { 
+// 				//----------------- Get latest Id -------------------- 
+// 				$idsetup = $dblms->lastestid();	
+// 				//--------------------------------
+// 				$concession = 0;
+// 				$totalAmount = 0;
+// 				// $payable = 0;
+// 				//--------------------------------------
+// 				for($i=1; $i<= count($_POST['id_cat']); $i++){
+// 					if($_POST['amount'][$i] > 0) {
+// 						$sqllmsPart = $dblms->querylms("INSERT INTO ".FEE_PARTICULARS."(
+// 																		  id_fee
+// 																		, id_cat
+// 																		, amount						
+// 																	)
+// 																VALUES(
+// 																		  '".cleanvars($idsetup)."'
+// 																		, '".cleanvars($_POST['id_cat'][$i])."'
+// 																		, '".cleanvars($_POST['amount'][$i])."'			
+// 																	)
+// 															");
+														
+// 						if($_POST['id_cat'][$i] == 17){
+// 							$totalAmount = $totalAmount - $_POST['amount'][$i];
+// 						}else{
+// 							$totalAmount = $totalAmount + $_POST['amount'][$i];
+// 						}	
+// 					}
+// 				}
+				
+// 				//	PREVIOUS CHALLANS AMOUNT AND FINE
+// 				// $rem_challan = cleanvars($_POST['rem_challan']);
+// 				// $prev_challans = cleanvars($_POST['prev_challans']);
+// 				// $narration = $prev_challans.','.$rem_challan;
+// 				// $prev_remaining_amount = cleanvars($_POST['prev_total']);
+
+// 				//------------ Update Total Amount ----------------
+
+//                 if($_POST['whatsappno']) {
+// 					$sqlStudent = $dblms->querylms("SELECT std_name FROM ".STUDENTS." WHERE std_id = '".$_POST['id_std']."' LIMIT 1");
+// 					$studentData = mysqli_fetch_assoc($sqlStudent);
+// 					$studentName = isset($studentData['std_name']) ? $studentData['std_name'] : 'Student';
+
+//                     if($_POST['idclassgroup'] == 3) {
+//                         $challanprefix 	= 1000014000;
+//                     } else {
+//                         $challanprefix 	= 1000014011;
+//                     }
+//                     $challanNumber = $challanprefix.substr($challano, -7);
+//                    $msgs = "Dear " . $studentName . "\n" .
+// 							"Kindly ensure to submit your school fee payment month of " . get_monthtypes($idmonth) . "-" . date('Y', strtotime($issue_date)) . " before due date to avoid any inconvenience. If the school fee is not paid by due date " . date('d-m-Y', strtotime($due_date)) . " fine Rs 300 will be imposed with monthly fee.\n\n" .
+// 							"Scan to Pay from Any Mobile Banking App\n" .
+// 							"Challan Number: " . $challano . "\n" .
+// 							"Challan Amount Rs. " . number_format($totalAmount) . "/-\n" .
+// 							"https://aghosh.gptech.pk/raast_qr.php?challanNo=" . get_dataHashingOnlyExp($challano, true) . "\n\n" .
+// 							"Regards:\n" . 
+// 							"Accounts Department\n" .
+// 							"Aghosh Complex";
+//                     // whatsapp message
+//                     $datawa = array(
+//                                           'status'         => 0
+//                                         , 'dated'           => date("Y-m-d")
+//                                         , 'challanno'       => $challano
+//                                         , 'amount'          => $totalAmount
+//                                         , 'cellno'          => ($_POST['whatsappno'])
+//                                         , 'message_type'    => 1
+//                                         , 'message'         => $msgs
+//                                     );
+//                     $querywhtsapp = $dblms->Insert(WHATSAPP_MESSAGES, $datawa);
+
+//                 }
+
+// 				$sqllmsUpdate  = $dblms->querylms("UPDATE ".FEES." SET  
+// 															total_amount	= '".cleanvars($totalAmount)."'
+// 															WHERE id		= '".$idsetup."'
+// 													");
+
+// 				//------------ Update Previous partial Challans as Paid ----------------
+// 				// $sqllmsUpdatePrev  = $dblms->querylms("UPDATE ".FEES." SET
+// 				// 											status		= '1'
+// 				// 											WHERE challan_no IN ($prev_challans)
+// 				// 											AND status = '4'
+// 				// 									");
+
+// 				//------------ Update Previous pending Challans as UNPAID ----------------
+// 				// $sqllmsUpdatePrev  = $dblms->querylms("UPDATE ".FEES." SET
+// 				// 											status		= '3'
+// 				// 											WHERE challan_no IN ($prev_challans)
+// 				// 											AND status = '2'
+// 				// 									");
+
+// 				//------------ Scholarship Added in Challan ----------------
+// 				$sqllmsUpdate  = $dblms->querylms("UPDATE ".SCHOLARSHIP." SET  
+// 														challan_no	= '".cleanvars($challano)."'
+// 														WHERE id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
+// 														AND id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'
+// 														AND id_type = '3' AND status = '1' AND is_deleted != '1'
+// 														AND id_std = '".cleanvars($_POST['id_std'])."' AND challan_no = ''
+// 														AND  MONTH(date) IN ('".$month."', '".$idmonth."') ");
+
+// 				//-------------------- Make Log ------------------------
+// 				$remarks = "Single Fee Challan Genrated";
+// 				$sqllmslog  = $dblms->querylms("INSERT INTO ".ACCOUNTS_LOGS." (
+// 															  id_user 
+// 															, filename 
+// 															, action
+// 															, challan_no
+// 															, dated
+// 															, ip
+// 															, remarks 
+// 															, id_campus				
+// 														)
+
+// 													VALUES(
+// 															  '".cleanvars($_SESSION['userlogininfo']['LOGINIDA'])."'
+// 															, '".strstr(basename($_SERVER['REQUEST_URI']), '.php', true)."'
+// 															, '1'
+// 															, '".cleanvars($challano)."'
+// 															, NOW()
+// 															, '".cleanvars($ip)."'
+// 															, '".cleanvars($remarks)."'
+// 															, '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."'
+// 														)
+// 												");
+// 			}
+// 		}
+// 		else{
+// 			$_SESSION['msg']['title'] 	= 'Error';
+// 			$_SESSION['msg']['text'] 	= 'Record Already Exists';
+// 			$_SESSION['msg']['type'] 	= 'error';
+// 			header("Location: fee_challans.php", true, 301);
+// 			exit();
+// 		}
+// 		//--------------------------------------
+
+// 		if($sqllms) { 
+			
+// 			// Send Message
+// 			$phone = str_replace("-","",$_POST['std_phone']);
+// 			$message = 'Dear Parents,'.PHP_EOL.''.PHP_EOL.'Your child fee challan # '.cleanvars($challano).' for the month '.get_monthtypes($idmonth).' of amount '.number_format($totalAmount).' with due date '.date('d-m-Y' , strtotime(cleanvars($_POST['due_date']))).' has been issued.'.PHP_EOL.''.PHP_EOL.'Thanks,'.PHP_EOL.'Aghosh Grammar School';
+// 			//sendMessage($phone, $message);		
+
+// 			//--------------------------------------
+// 			$_SESSION['msg']['title'] 	= 'Successfully';
+// 			$_SESSION['msg']['text'] 	= 'Record Successfully Added.';
+// 			$_SESSION['msg']['type'] 	= 'success';
+// 			header("Location: feechallanprint.php?id=".$challano."", true, 301);
+// 			exit();
+// 			//--------------------------------------
+// 		}
+// 	}
+// 	else{
+// 		$_SESSION['msg']['title'] 	= 'Error';
+// 		$_SESSION['msg']['text'] 	= 'Challan not genrated.';
+// 		$_SESSION['msg']['type'] 	= 'error';
+// 		header("Location: fee_challans.php", true, 301);
+// 		exit();
+// 	}	
+// }
 
 //	Update Single Fee Challan
 if(isset($_POST['changes_challan'])){ 

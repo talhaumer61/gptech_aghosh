@@ -11,6 +11,7 @@ if(isset($_POST['id_std']) && isset($_POST['yearmonth'])){
 	$yearmonth 	= date('Y-m', strtotime(cleanvars($_POST['yearmonth'])));
 	$year 		= date('y', strtotime(cleanvars($_POST['yearmonth'])));
 	$idmonth 	= date('n', strtotime(cleanvars($_POST['yearmonth'])));
+    $fullYear   = date('Y', strtotime(cleanvars($_POST['yearmonth'])));
     
 	// Get all Student Concessions
 	$conditions = array ( 
@@ -149,7 +150,8 @@ if(isset($_POST['id_std']) && isset($_POST['yearmonth'])){
                                                                         AND  id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'
                                                                         AND  id_type = '3' AND status = '1' AND is_deleted != '1'
                                                                         AND  id_std = '".$id_std."'
-                                                                        AND  MONTH(date) IN ('".$month."', '".$idmonth."') ");
+                                                                        AND  MONTH(date) = '".$idmonth."' 
+                                                                        AND  YEAR(date) = '".$fullYear."' ");
                                     // Fine Amount 
                                     $values_fine = 	mysqli_fetch_array($sql_fine);
                                     
