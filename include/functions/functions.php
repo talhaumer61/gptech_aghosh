@@ -1231,4 +1231,43 @@ function sendWhatsApp($number, $message)
 
     return $response;
 }
-?>
+
+
+function sendWhatsAppMessage($senderurl, $apikey, $sender, $number, $message) {
+    $curl = curl_init();
+
+    $url = $senderurl . '?' . http_build_query([
+            'api_key' => $apikey,
+            'sender'  => $sender,
+            'number'  => $number,
+            'message' => $message
+        ]);
+
+    curl_setopt_array($curl, [
+        CURLOPT_URL            => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_TIMEOUT        => 30,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HEADER         => true,
+    ]);
+
+    $response = curl_exec($curl);
+
+    $result = [
+        'success'   => false,
+        'http_code' => curl_getinfo($curl, CURLINFO_HTTP_CODE),
+        'response'  => $response,
+        'error'     => null,
+    ];
+
+    if ($response === false) {
+        $result['error'] = curl_error($curl);
+    } else {
+        $result['success'] = ($result['http_code'] >= 200 && $result['http_code'] < 300);
+    }
+
+    curl_close($curl);
+
+    return $result;
+}

@@ -16,7 +16,7 @@ if(isset($_POST['challans_generate'])){
 		$sqllmsstudent	= $dblms->querylms("SELECT s.std_id, s.std_name, s.id_session, s.is_hostelized, s.std_phone, 
 													s.std_whatsapp, s.transport_fee, s.admission_formno, fs.id
 												FROM ".STUDENTS." s
-												INNER JOIN ".FEESETUP." fs ON s.id_class = fs.id_class AND fs.id_session = s.id_session 
+												INNER JOIN ".FEESETUP." fs ON s.id_class = fs.id_class AND fs.id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."' 
 												WHERE s.id_campus = '".$_SESSION['userlogininfo']['LOGINCAMPUS']."'  
 												AND s.id_class = '".cleanvars($classarry[0])."'
 												AND fs.id_campus = '".$_SESSION['userlogininfo']['LOGINCAMPUS']."' 

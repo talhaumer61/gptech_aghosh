@@ -59,6 +59,7 @@ echo'
 											INNER JOIN ".SESSIONS." se ON se.session_id = f.id_session
 											WHERE f.id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
 											AND f.challan_no = '".cleanvars($_GET['id'])."'
+											AND f.id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'
 											AND f.is_deleted != '1' LIMIT 1");
 
 		$feercord = mysqli_fetch_array($sqllms);

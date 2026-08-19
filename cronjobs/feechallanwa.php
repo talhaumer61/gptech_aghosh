@@ -5,7 +5,7 @@ ini_set('memory_limit', '-1');
 require_once("../include/dbsetting/classdbconection.php");
 require_once("../include/functions/functions.php");
 $dblms = new dblms();
-
+$senderurl  = "http://whatsapp.metasquad.info/send-message";
     $conditions = array (
                                      'select' 		=> '*'
                                    , 'where' 		=> array (
@@ -19,35 +19,14 @@ $dblms = new dblms();
     $Adminslist 	= $dblms->getRows(WHATSAPP_MESSAGES,  $conditions);
     foreach ($Adminslist as $listwa) :
 
-        $curl = curl_init();
+        $waResult = sendWhatsAppMessage($senderurl, WA_APPKEY, WA_SENDER, $listwa['cellno'], $listwa['message']);
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL             => WA_URL,
-            CURLOPT_RETURNTRANSFER  => true,
-            CURLOPT_ENCODING        => '',
-            CURLOPT_MAXREDIRS       => 10,
-            CURLOPT_TIMEOUT         => 0,
-            CURLOPT_FOLLOWLOCATION  => true,
-            CURLOPT_HTTP_VERSION    => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST   => 'POST',
-            CURLOPT_POSTFIELDS      => array(
-                                                  'api_key' => WA_APPKEY
-                                                , 'sender'  => WA_SENDER
-                                                , 'number'  => $listwa['cellno']
-                                                , 'message' => $listwa['message']
-                                            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);
-
-        $responseArray = json_decode($response, true);
-        if($responseArray['data']['status_code'] == 200) {
-            $status = 1;
-        } else {
+        if ($waResult['error']) {
             $status = 3;
+        } else {
+            $status = 1;
         }
+
         $data = array (
                             'status' =>  $status
                       );
