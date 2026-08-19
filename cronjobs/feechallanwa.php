@@ -5,7 +5,6 @@ ini_set('memory_limit', '-1');
 require_once("../include/dbsetting/classdbconection.php");
 require_once("../include/functions/functions.php");
 $dblms = new dblms();
-$senderurl  = "http://whatsapp.metasquad.info/send-message";
     $conditions = array (
                                      'select' 		=> '*'
                                    , 'where' 		=> array (
@@ -19,7 +18,7 @@ $senderurl  = "http://whatsapp.metasquad.info/send-message";
     $Adminslist 	= $dblms->getRows(WHATSAPP_MESSAGES,  $conditions);
     foreach ($Adminslist as $listwa) :
 
-        $waResult = sendWhatsAppMessage($senderurl, WA_APPKEY, WA_SENDER, $listwa['cellno'], $listwa['message']);
+        $waResult = sendWhatsAppMessage(WA_URL, WA_APPKEY, WA_SENDER, $listwa['cellno'], $listwa['message']);
 
         if ($waResult['error']) {
             $status = 3;

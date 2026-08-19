@@ -4,53 +4,35 @@ require_once("../include/dbsetting/lms_vars_config.php");
 ini_set('memory_limit', '-1');
 require_once("../include/dbsetting/classdbconection.php");
 require_once("../include/functions/functions.php");
+
 $dblms = new dblms();
 
-    $conditions = array (
-                                     'select' 		=> '*'
-                                   , 'where' 		=> array (
-                                                                      'status' => 0
-                                                                    , 'message_type' => 2
-                                                            )
-                                   , 'order_by' 	=> " dated ASC"
-                                   , 'return_type'  => 'all'
-                        );
-    $Adminslist 	= $dblms->getRows(WHATSAPP_MESSAGES,  $conditions);
-    foreach ($Adminslist as $listwa) :
+$conditions = array(
+    'select'      => '*',
+    'where'       => array(
+        'status'       => 0,
+        'message_type' => 2
+    ),
+    'order_by'    => "dated ASC",
+    'return_type' => 'all'
+);
 
-        $curl = curl_init();
+$Adminslist = $dblms->getRows(WHATSAPP_MESSAGES, $conditions);
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL             => WA_URL,
-            CURLOPT_RETURNTRANSFER  => true,
-            CURLOPT_ENCODING        => '',
-            CURLOPT_MAXREDIRS       => 10,
-            CURLOPT_TIMEOUT         => 0,
-            CURLOPT_FOLLOWLOCATION  => true,
-            CURLOPT_HTTP_VERSION    => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST   => 'POST',
-            CURLOPT_POSTFIELDS      => array(
-                                                  'api_key' => WA_APPKEY
-                                                , 'sender'  => WA_SENDER
-                                                , 'number'  => $listwa['cellno']
-                                                , 'message' => $listwa['message']
-                                            ),
-        ));
+foreach ($Adminslist as $listwa) :
 
-        $response = curl_exec($curl);
+    $waResult = sendWhatsAppMessage(WA_URL, WA_APPKEY, WA_SENDER, $listwa['cellno'], $listwa['message']);
 
-        curl_close($curl);
-        $responseArray = json_decode($response, true);
-        if($responseArray['data']['status_code'] == 200) {
-            $status = 1;
-        } else {
-            $status = 3;
-        }
-            $data = array (
-                                  'status' =>  $status
-                           );
+    if ($waResult['error'] || !$waResult['success']) {
+        $status = 3;
+    } else {
+        $status = 1;
+    }
 
-            $qryUpdate = $dblms->Update(WHATSAPP_MESSAGES, $data, "id = '".($listwa['id'])."'");
+    $data = array(
+        'status' => $status
+    );
 
+    $qryUpdate = $dblms->Update(WHATSAPP_MESSAGES, $data, "id = '" . ($listwa['id']) . "'");
 
-    endforeach;
+endforeach;

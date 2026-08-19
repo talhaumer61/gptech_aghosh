@@ -537,28 +537,16 @@
                             . "Password: ".$pass."\n\n"
                             . "Regards,\n"
                             . "Aghosh Complex";
-                            $curl = curl_init();
+                            $waResult = sendWhatsAppMessage(WA_URL, WA_APPKEY, WA_SENDER, $phone, $data['message']);
 
-                            curl_setopt_array($curl, array(
-                                CURLOPT_URL             => WA_URL,
-                                CURLOPT_RETURNTRANSFER  => true,
-                                CURLOPT_ENCODING        => '',
-                                CURLOPT_MAXREDIRS       => 10,
-                                CURLOPT_TIMEOUT         => 0,
-                                CURLOPT_FOLLOWLOCATION  => true,
-                                CURLOPT_HTTP_VERSION    => CURL_HTTP_VERSION_1_1,
-                                CURLOPT_CUSTOMREQUEST   => 'POST',
-                                CURLOPT_POSTFIELDS      => array(
-                                                                    'api_key' => WA_APPKEY
-                                                                    , 'sender'  => WA_SENDER
-                                                                    , 'number'  => $phone
-                                                                    , 'message' => $data['message']
-                                                                ),
-                            ));
-
-                            $response = curl_exec($curl);
-                            curl_close($curl);
-                            $responseArray = json_decode($response, true);
+                            // Format response array to preserve API evaluation compatibility
+                            $responseArray = [
+                                'data' => [
+                                    'status_code' => ($waResult['success'] && !$waResult['error']) ? 200 : ($waResult['http_code'] ?: 500)
+                                ],
+                                'raw_response' => $waResult['response'],
+                                'error'        => $waResult['error']
+                            ];
 
                             // Make Log
                             $remarks = 'Admission Fee Paid through Finja, Record Added In Student.';
@@ -588,31 +576,23 @@
                     if($sqllmsupdate){ 
 
 
-                        $curl = curl_init();
+                        // Send message via helper function
+                        $waResult = sendWhatsAppMessage(WA_URL, WA_APPKEY, WA_SENDER, $phone, $message);
 
-                        curl_setopt_array($curl, array(
-                            CURLOPT_URL             => WA_URL,
-                            CURLOPT_RETURNTRANSFER  => true,
-                            CURLOPT_ENCODING        => '',
-                            CURLOPT_MAXREDIRS       => 10,
-                            CURLOPT_TIMEOUT         => 0,
-                            CURLOPT_FOLLOWLOCATION  => true,
-                            CURLOPT_HTTP_VERSION    => CURL_HTTP_VERSION_1_1,
-                            CURLOPT_CUSTOMREQUEST   => 'POST',
-                            CURLOPT_POSTFIELDS      => array(
-                                                                  'api_key' => WA_APPKEY
-                                                                , 'sender'  => WA_SENDER
-                                                                , 'number'  => $phone
-                                                                , 'message' => $message
-                                                            ),
-                        ));
+                        // Format response array to preserve API structure
+                        $responseArray = [
+                            'data' => [
+                                'status_code' => ($waResult['success'] && !$waResult['error']) ? 200 : ($waResult['http_code'] ?: 500)
+                            ],
+                            'raw_response' => $waResult['response'],
+                            'error'        => $waResult['error']
+                        ];
 
-                        $response = curl_exec($curl);
-                        echo $response;
-                        curl_close($curl);
-                        $responseArray = json_decode($response, true);
+                        // Output the raw response if needed for debug/logging
+                        if ($waResult['response'] !== false) {
+                            echo $waResult['response'];
+                        }
 
-                        
                         http_response_code(200);
                         echo json_encode(["status" => "200", 'description' => 'Challan Status Updated']);
                         
