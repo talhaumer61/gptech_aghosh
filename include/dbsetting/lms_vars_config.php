@@ -166,7 +166,8 @@
 //	define('WA_AUTHKEY'			, "XX7qqFibTT17CT6hDxKAK78DouIEwdOnomWtpf73DJsJlleDr5");
 
 	define('WA_URL'				, "http://whatsapp.metasquad.info/send-message");
-	define('WA_APPKEY'			, "wr6cxDJJHA9THQTt3jHRpZj2f4c8fi");
+	define('WA_APPKEY'			, "TYMB678P4YjZnC7yb9XssbIu3gqLEh");
+	// define('WA_APPKEY'			, "wr6cxDJJHA9THQTt3jHRpZj2f4c8fi");
 	define('WA_SENDER'			, "923194000430");
 
 	define('LMS_IP'				, $ip);

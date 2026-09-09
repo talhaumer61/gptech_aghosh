@@ -110,17 +110,11 @@
                 $rollno = "Null";
 
             }elseif($rowchallan['id_type'] == 2){
-                $sqllmsInquiry	= $dblms->querylms("SELECT name
-                                                        FROM ".ADMISSIONS_INQUIRY." 
-                                                        WHERE form_no = '".cleanvars($rowchallan['form_no'])."'
-                                                        AND id_campus = '".cleanvars($rowchallan['id_campus'])."'
-                                                        AND is_deleted != '1' LIMIT 1");
-                $stdData = mysqli_fetch_array($sqllmsInquiry);
                 // If Fee Challan
                 $name = $rowchallan['std_name'];
                 $phone = '92'.str_replace('-', '', ltrim($rowchallan['std_whatsapp'], '0'));
 
-                $message =  "Dear " . $stdData['name'] . "\n" .
+                $message =  "Dear " . $name . "\n" .
                             "Your Fee Challan No " . $rowchallan['challan_no'] . " Rs. " . number_format($respData['amount']) . "/ Month of " . get_monthtypes($rowchallan['id_month']) . "-" . date('Y') . " has been paid Dated " . date('d-m-Y') . ".\n\n" .
                             "https://aghosh.gptech.pk/feechallanprintwa.php?id=" . $rowchallan['challan_no'] . "\n\n" .
                             "Thanks for your Payment\n\n" .

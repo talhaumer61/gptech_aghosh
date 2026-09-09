@@ -1,22 +1,10 @@
 <?php
 echo'
 <style>
-	@page {
-		size: A4 landscape;
-		margin: 3mm;
-	}
-	@media print {
-		body, html {
-			height: 100%;
-			margin: 0 !important;
-			padding: 0 !important;
-		}
-	}
-
+	/* Absolute structural styling to mirror stamp precisely on each parent cell copy */
 	.challan-cell {
 		position: relative;
 		overflow: hidden;
-		vertical-align: top;
 	}
 	.paid-stamp-box {
 		position: absolute; 
@@ -52,30 +40,9 @@ echo'
 		font-weight: bold;
 		color: #333;
 	}
-	
-	/* Expanded QR code target styling */
-	img.qrcode {
-		width: 100px !important;
-		// height: auto !important;
-		height : 100px !important;
-		max-width: 160px !important;
-		display: block;
-		margin: 0 auto;
-	}
-	
-	/* Space reduction rules */
-	ol {
-		margin-top: 1px !important;
-		margin-bottom: 1px !important;
-		padding-left: 12px !important;
-	}
-	ol li {
-		line-height: 1.0 !important;
-		font-size: 7.5px !important;
-	}
 </style>
 
-<table width="100%" border="0" class="page" id="myTable" cellpadding="2" cellspacing="4" align="center" style="border-collapse:collapse; margin-top:0px;">
+<table width="99%" border="0" class="page " id="myTable" cellpadding="7" cellspacing="10" align="center" style="border-collapse:collapse; margin-top:0px;">
 	<tr>';
 		$sqllms  = $dblms->querylms("SELECT f.id, f.status, f.id_type, f.id_month, f.yearmonth, f.challan_no, f.id_session, f.id_class, f.id_section, f.inquiry_formno, f.id_std, f.narration,
 											f.issue_date, f.due_date, f.paid_date, f.total_amount, f.pay_mode, f.paid_amount, f.scholarship, f.concession, f.fine, f.prev_remaining_amount, f.remaining_amount, f.note, 
@@ -122,7 +89,7 @@ echo'
 	$link	=	$feercord['challan_no'].'-'.$feercord['id'];
 	QRcode::png($link, $filename, $errorCorrectionLevel, $matrixPointSize, 2);
 
-		$Instructions = '<ol type="1" style="margin-left:0px;">
+		$Instructions = '<ol type="1" style="margin-left:-20px;">
 			<li>Only Cash will be accepted.</li>
 			<li>'.date('jS \of F-Y',strtotime($feercord['due_date'])).' is due date.</li>
 			<li>Fine of Rs. 300/- will be charged after due date.</li>
@@ -342,7 +309,6 @@ echo'
 						
                             if($ifee == 1 && $feercord['status'] != 1) {
 							$qrCodeText = '';
-							$dynamicQrFilename = '';
 
 							$tokenParams = [
 								'username'      => BANKCO_USERNAME,
@@ -400,8 +366,6 @@ echo'
 
 								if(isset($qrResponse['qrCode'])) {
 									$qrCodeText = $qrResponse['qrCode'];
-									$dynamicQrFilename = $PNG_WEB_DIR.'raast_'.$feercord['challan_no'].'_'.$feercord['id'].'.png';
-									QRcode::png($qrCodeText, $dynamicQrFilename, 'H', 5, 2);
 								}
 
 								$dataRaastqr = array(
@@ -435,30 +399,27 @@ echo'
 						<span style="font-size:9px; float:right; margin-top:3px;">issue Date: '.date("m/d/Y").'</span>
 					</div>
 					<div style="clear:both;"></div>
-					<div style="font-size:12px; color:#000; margin-top:5px;">
-						<table width="100%" border="0" style="border-collapse:collapse; table-layout:fixed;" cellpadding="0" cellspacing="5">
+					<div style="font-size:13px; color:#000; margin-top:10px;">
+						<table width="100%" border="0" style="border-collapse:collapse;" cellpadding="0" cellspacing="5">
 							<tr>
-								<td style="font-weight:normal; font-style:italic; text-align:left; font-size:11px; width:60%;">Rupees in word: <span style="text-decoration:underline; font-size:9px; color:#000;">'.convert_number_to_words($grandTotal).' only</span>
+								<td style="font-weight:normal; font-style:italic; text-align:left; font-size:11px; width:85%;">Rupees in word: <span style="text-decoration:underline; font-size:9px; color:#000;">'.convert_number_to_words($grandTotal).' only</span>
 								</td>
 								<td style="font-weight:normal; font-style:italic; text-align:right;">Cashier</td>
 							</tr>
 							<tr>
-								<td style="font-weight:normal; font-style:italic; color: #777777; text-align:left; font-size:9px; width:80%; vertical-align:top;"><b>Parents Note: </b>
+								<td style="font-weight:normal; font-style:italic; color: #777777; text-align:left; font-size:9px; width:80%;"><b>Parents Note: </b>
 									'.$Instructions.'
 									<b>Student Login: </b>
-									<ol type="1" style="margin-left:0px;">
+									<ol type="1" style="margin-left:-20px;">
 										<li>Visit this url '.SITE_URL.'</li>
 										<li>Provide Username = '.$valusername['adm_username'].' </li>
 										<li>Provide Password = ags@786</li>
 									</ol>
 								</td>
-								<td style="text-align:right; width:40%; vertical-align:top;">';
-									if($ifee == 1 && $feercord['status'] != 1 && $qrCodeText != '' && $dynamicQrFilename != ''){
-										echo '
-										<div style="font-weight:normal; font-style:italic; text-align:center; margin-top:3px; display: flex; flex-direction: column; align-items: end; justify-content: center;">
-										<img  src="'.$PNG_WEB_DIR.basename($dynamicQrFilename).'"  style="margin: 0;" class="qrcode" align="right">
-											<p style="margin-right: 14px; margin-bottom: 0; margin-top: 0;">Scan and Pay</p>
-										</div>';
+								<td style="text-align:right; " valign="top">';
+									if($ifee == 1 && $feercord['status'] != 1 && $qrCodeText != ''){
+										echo '<div class="qrcode" id="qrcode"></div>
+											<div style="font-weight:normal; font-style:italic; text-align:center;">Scan and Pay</div>';
 									}else {
 										echo '<img src="'.$PNG_WEB_DIR.basename($filename).'" align="right" >';
 									}
@@ -590,7 +551,6 @@ echo'
 						
                             if($ifee == 1) {
 							$qrCodeText = '';
-							$dynamicQrFilename = '';
 
 							$tokenParams = [
 								'username'      => BANKCO_USERNAME,
@@ -647,8 +607,6 @@ echo'
 
 								if(isset($qrResponse['qrCode'])) {
 									$qrCodeText = $qrResponse['qrCode'];
-									$dynamicQrFilename = $PNG_WEB_DIR.'raast_'.$feercord['challan_no'].'_'.$feercord['id'].'.png';
-									QRcode::png($qrCodeText, $dynamicQrFilename, 'H', 5, 2);
 								}
 
 								$dataRaastqr = array(
@@ -683,24 +641,21 @@ echo'
 					</div>
 			
 					<div style="clear:both;"></div>
-					<div style="font-size:12px; color:#000; margin-top:5px;">
-						<table width="100%" border="0" style="border-collapse:collapse; table-layout:fixed;" cellpadding="0" cellspacing="5">
+					<div style="font-size:13px; color:#000; margin-top:10px;">
+						<table width="100%" border="0" style="border-collapse:collapse;" cellpadding="0" cellspacing="5">
 							<tr>
-								<td style="font-weight:normal; font-style:italic; text-align:left; font-size:11px; width:60%;">Rupees in word: <span style="text-decoration:underline; font-size:9px; color:#000;">'.convert_number_to_words($feercord['total_amount']).' only</span>
+								<td style="font-weight:normal; font-style:italic; text-align:left; font-size:11px; width:85%;">Rupees in word: <span style="text-decoration:underline; font-size:9px; color:#000;">'.convert_number_to_words($feercord['total_amount']).' only</span>
 								</td>
 								<td style="font-weight:normal; font-style:italic; text-align:right;">Cashier</td>
 							</tr>
 							<tr>
-								<td style="font-weight:normal; font-style:italic; color: #777777; text-align:left; font-size:9px; width:80%; vertical-align:top;"><b>Parents Note: </b>
+								<td style="font-weight:normal; font-style:italic; color: #777777; text-align:left; font-size:9px; width:80%;"><b>Parents Note: </b>
 									'.$Instructions.'
 								</td>
-								<td style="text-align:right; width:40%; vertical-align:top;">';
-									if($ifee == 1 && $feercord['status'] != 1 && $qrCodeText != '' && $dynamicQrFilename != '') {
-										echo '
-										<div style="font-weight:normal; font-style:italic; text-align:center; margin-top:3px;">
-										<img src="'.$PNG_WEB_DIR.basename($dynamicQrFilename).'" class="qrcode" align="right">
-													<p style="margin: 0;">Scan and Pay</p>
-												</div>';
+								<td style="text-align:right; " valign="top">';
+									if($ifee == 1 && $feercord['status'] != 1 && $qrCodeText != '') {
+										echo '<div class="qrcode" id="qrcode"></div>
+											<div style="font-weight:normal; font-style:italic; text-align:center;">Scan and Pay</div>';
 									}else{
 										echo '<img src="'.$PNG_WEB_DIR.basename($filename).'" align="right" >';
 									}
@@ -719,5 +674,22 @@ echo'
 </table>';
 
 echo '
+<script src="assets/javascripts/qr-code-styling.js"></script>
+<script>
+	const qrCodeText = "'.$qrCodeText.'";
+	const qrCode = new QRCodeStyling({
+		width: 85,
+		height: 85,
+		type: "svg",
+		data: qrCodeText,
+		qrOptions: {
+			errorCorrectionLevel: "H"
+		}
+	});
+
+	if(document.getElementById("qrcode")) {
+		qrCode.append(document.getElementById("qrcode"));
+	}
+</script>
 <script>window.print();</script>';
 ?>

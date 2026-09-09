@@ -17,7 +17,7 @@ if(isset($_POST['id_std']) && isset($_POST['yearmonth'])){
 	$conditions = array ( 
 								  'select' 		=> 'st.std_id, st.id_class, st.id_section, st.id_session, st.is_hostelized, st.is_orphan, 
 													st.std_name, st.std_whatsapp, st.is_orphan_approved, st.std_phone, st.transport_fee, fs.id'
-								, 'join' 		=> "INNER JOIN ".FEESETUP." fs ON st.id_class = fs.id_class AND fs.id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'"
+								, 'join' 		=> "INNER JOIN ".FEESETUP." fs ON st.id_class = fs.id_class AND fs.id_session = st.id_session"
 								, 'where' 		=> array( 
 															  'st.id_campus' 	=> $_SESSION['userlogininfo']['LOGINCAMPUS']
 															, 'fs.id_campus' 	=> $_SESSION['userlogininfo']['LOGINCAMPUS']
@@ -147,7 +147,6 @@ if(isset($_POST['id_std']) && isset($_POST['yearmonth'])){
                                     $sql_fine	= $dblms->querylms("SELECT SUM(amount) as fine
                                                                         FROM ".SCHOLARSHIP." 
                                                                         WHERE id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
-                                                                        AND  id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'
                                                                         AND  id_type = '3' AND status = '1' AND is_deleted != '1'
                                                                         AND  id_std = '".$id_std."'
                                                                         AND  MONTH(date) = '".$idmonth."' 
@@ -202,7 +201,6 @@ if(isset($_POST['id_std']) && isset($_POST['yearmonth'])){
                                 <input type="text" class="form-control '.$cat.'" name="amount['.$srno.']" id="amount['.$srno.']" value="'; if($cat_amount > 0){echo''.$cat_amount.'';} else{echo'0';} echo'" required title="Must Be Required" '.$edit.'/>
                             </div>';
                         }
-
                 echo'
                 </div>
 

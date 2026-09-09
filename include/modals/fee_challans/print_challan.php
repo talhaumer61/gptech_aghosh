@@ -15,7 +15,7 @@ echo '
 							<option value="">Select</option>';
 							$sqllmsclass	= $dblms->querylms("SELECT class_id, class_name 
 																	FROM ".CLASSES." 
-																	WHERE class_status = '1' ORDER BY class_id ASC");
+																	WHERE class_status = '1' ORDER BY class_ordering ASC");
 							while($value_class 	= mysqli_fetch_array($sqllmsclass)) {
 							echo '<option value="'.$value_class['class_id'].'">'.$value_class['class_name'].'</option>';
 							}

@@ -1271,3 +1271,41 @@ function sendWhatsAppMessage($senderurl, $apikey, $sender, $number, $message) {
 
     return $result;
 }
+// function sendWhatsAppMessage($senderurl, $apikey, $sender, $number, $message)
+// {
+//     $curl = curl_init();
+
+//     $url = rtrim($senderurl, '/') . '?' . http_build_query([
+//         'api_key' => $apikey,
+//         'sender'  => $sender,
+//         'number'  => $number,
+//         'message' => $message
+//     ]);
+
+//     curl_setopt_array($curl, [
+//         CURLOPT_URL            => $url,
+//         CURLOPT_RETURNTRANSFER => true,
+//         CURLOPT_HTTPGET        => true,
+//         CURLOPT_TIMEOUT        => 30,
+//         CURLOPT_FOLLOWLOCATION => false,
+//         CURLOPT_HEADER         => false,
+//         CURLOPT_HTTPHEADER     => [
+//             'Accept: application/json',
+//         ],
+//     ]);
+
+//     $response = curl_exec($curl);
+
+//     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+//     $curlError = curl_error($curl);
+
+//     curl_close($curl);
+
+//     return [
+//         'success'   => ($response !== false && $httpCode >= 200 && $httpCode < 300),
+//         'http_code' => $httpCode,
+//         'response'  => $response,
+//         'error'     => $curlError ?: null,
+//         'url'       => $url
+//     ];
+// } 

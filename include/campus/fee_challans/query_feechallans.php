@@ -16,7 +16,7 @@ if(isset($_POST['challans_generate'])){
 		$sqllmsstudent	= $dblms->querylms("SELECT s.std_id, s.std_name, s.id_session, s.is_hostelized, s.std_phone, 
 													s.std_whatsapp, s.transport_fee, s.admission_formno, fs.id
 												FROM ".STUDENTS." s
-												INNER JOIN ".FEESETUP." fs ON s.id_class = fs.id_class AND fs.id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."' 
+												INNER JOIN ".FEESETUP." fs ON s.id_class = fs.id_class AND fs.id_session = s.id_session AND fs.is_deleted != '1' AND fs.status = '1' 
 												WHERE s.id_campus = '".$_SESSION['userlogininfo']['LOGINCAMPUS']."'  
 												AND s.id_class = '".cleanvars($classarry[0])."'
 												AND fs.id_campus = '".$_SESSION['userlogininfo']['LOGINCAMPUS']."' 
@@ -45,7 +45,7 @@ if(isset($_POST['challans_generate'])){
 													");
 				if(mysqli_num_rows($sqllmsPrevChallan) == 0){
 					
-			//Check Student Hostel Registration
+					//Check Student Hostel Registration
 					$sqllmHostelRegistration	= $dblms->querylms("SELECT id 
 																	FROM ".HOSTEL_REG."
 																	WHERE status    = '1' 
@@ -127,7 +127,6 @@ if(isset($_POST['challans_generate'])){
                                     $sql_fine	= $dblms->querylms("SELECT SUM(amount) as fine
                                                                         FROM ".SCHOLARSHIP." 
                                                                         WHERE id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
-                                                                        AND  id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'
                                                                         AND  id_type = '3' AND status = '1' AND is_deleted != '1'
                                                                         AND  id_std = '".$value_std['std_id']."'
                                                                         AND (challan_no IS NULL OR TRIM(challan_no) = '')");
@@ -253,7 +252,6 @@ if(isset($_POST['challans_generate'])){
 							$sqllmsUpdate  = $dblms->querylms("UPDATE ".SCHOLARSHIP." SET  
 																	challan_no	= '".cleanvars($challano)."'
 																	WHERE id_campus = '".cleanvars($_SESSION['userlogininfo']['LOGINCAMPUS'])."' 
-																	AND id_session = '".cleanvars($_SESSION['userlogininfo']['ACADEMICSESSION'])."'
 																	AND id_type = '3' AND status = '1' AND is_deleted != '1' 
 																	AND id_std = '".cleanvars($value_std['std_id'])."' AND challan_no = ''
 																	AND  MONTH(date) IN ('".$month."', '".$idmonth."') ");
