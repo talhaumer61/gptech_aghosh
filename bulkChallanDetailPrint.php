@@ -93,7 +93,7 @@ $sqllms	= $dblms->querylms("SELECT s.std_id, s.std_status, s.std_name, s.id_sess
 								   FROM ".STUDENTS." s
 								   INNER JOIN ".CLASSES." c ON c.class_id = s.id_class
 								   INNER JOIN ".FEES." f ON f.id_std = s.std_id
-								   WHERE s.std_id != '' AND f.is_deleted != '1'
+								   WHERE s.std_id != '' AND f.is_deleted != '1' AND s.std_status = '1' 
 								   AND f.id_month = '".$id_month."'
                                    AND f.id_class = '".$_GET['id_class']."'
 								   AND f.status != '1'

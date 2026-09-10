@@ -128,23 +128,7 @@ if(isset($_POST['challan_cashpay'])){
 
 
         if($_POST['whatsappno']) {
-			$sqllmsAdmissionStudents = $dblms->querylms("SELECT inq.name
-                                                FROM ".ADMISSIONS_INQUIRY." inq
-                                                INNER JOIN ".FEES." f ON f.inquiry_formno = inq.form_no
-                                                WHERE NOT EXISTS(
-                                                                    SELECT s.std_id
-                                                                    FROM ".STUDENTS." s
-                                                                    WHERE s.admission_formno = inq.form_no
-                                                                    AND s.is_deleted = '0'
-                                                                )
-                                                AND f.status        = '1'
-                                                AND f.id_type       = '1'
-                                                AND f.is_deleted    = '0'
-                                                AND inq.is_deleted  = '0'
-												AND f.challan_no	= '".cleanvars($_POST['challanno'])."'
-                                            ");
-			$stdData = mysqli_fetch_array($sqllmsAdmissionStudents);
-            $msgs = "Dear " . $stdData['name'] . "\n" .
+            $msgs = "Dear " . $_POST['stdname'] . "\n" .
 					"Your Fee Challan No " . $_POST['challanno'] . " Rs. " . number_format($_POST['totaltransamount']) . "/ Month of " . $_POST['monthname'] . "-" . date('Y', strtotime($paidDate)) . " has been paid Dated " . date('d-m-Y', strtotime($paidDate)) . ".\n\n" .
 					"https://aghosh.gptech.pk/feechallanprintwa.php?id=" . $_POST['challanno'] . "\n\n" .
 					"Thanks for your Payment\n\n" .
@@ -515,23 +499,7 @@ if(isset($_POST['challan_partialcashpay'])){
 		}
 
         if($_POST['whatsappno']) {
-			$sqllmsAdmissionStudents = $dblms->querylms("SELECT inq.name
-                                                FROM ".ADMISSIONS_INQUIRY." inq
-                                                INNER JOIN ".FEES." f ON f.inquiry_formno = inq.form_no
-                                                WHERE NOT EXISTS(
-                                                                    SELECT s.std_id
-                                                                    FROM ".STUDENTS." s
-                                                                    WHERE s.admission_formno = inq.form_no
-                                                                    AND s.is_deleted = '0'
-                                                                )
-                                                AND f.status        IN (1,4)
-                                                AND f.id_type       = '1'
-                                                AND f.is_deleted    = '0'
-                                                AND inq.is_deleted  = '0'
-												AND f.challan_no	= '".cleanvars($_POST['challanno'])."'
-                                            ");
-			$stdData = mysqli_fetch_array($sqllmsAdmissionStudents);
-            $msgs = "Dear " . $stdData['name'] . "\n" .
+            $msgs = "Dear " . $_POST['stdname'] . "\n" .
 					"Your Fee Challan No " . $_POST['challanno'] . " Rs. " . number_format($_POST['totaltransamount']) . "/ Month of " . $_POST['monthname'] . "-" . date('Y', strtotime($paidDate)) . " has been paid Dated " . date('d-m-Y', strtotime($paidDate)) . ".\n\n" .
 					"https://aghosh.gptech.pk/feechallanprintwa.php?id=" . $_POST['challanno'] . "\n\n" .
 					"Thanks for your Payment\n\n" .
