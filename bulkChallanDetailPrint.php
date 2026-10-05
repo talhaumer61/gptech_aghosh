@@ -93,7 +93,7 @@ $sqllms	= $dblms->querylms("SELECT s.std_id, s.std_status, s.std_name, s.id_sess
 								   FROM ".STUDENTS." s
 								   INNER JOIN ".CLASSES." c ON c.class_id = s.id_class
 								   INNER JOIN ".FEES." f ON f.id_std = s.std_id
-								   WHERE s.std_id != '' AND f.is_deleted != '1' AND s.std_status = '1' 
+								   WHERE s.std_id != '' AND f.is_deleted != '1' AND s.std_status = '1' AND s.is_deleted != 1
 								   AND f.id_month = '".$id_month."'
                                    AND f.id_class = '".$_GET['id_class']."'
 								   AND f.status != '1'
@@ -138,6 +138,7 @@ if(mysqli_num_rows($sqllms) > 0){
     $totFine = 0;
     $totRemaining = 0;
     $totPayable = 0;
+	$actualTotal = 0;
 
 	//------------------------------------------------
 	while($valueStudent = mysqli_fetch_array($sqllms)) {
@@ -214,6 +215,7 @@ if(mysqli_num_rows($sqllms) > 0){
             <td style="text-align: right;">'.number_format($valFine['amount']).'</td>
             <td style="text-align: right;">'.number_format($valueStudent['total_amount']).'</td>
         </tr>';
+		$actualTotal = $actualTotal + $valueFee['total_amount'];
 		$grandTotal = $grandTotal +  $total_amount;
         $totalConcessionScholarship = $totalConcessionScholarship + $totalConcession;
         $totRemaining = $totRemaining + $valPrevTotal['amount'];
@@ -222,9 +224,10 @@ if(mysqli_num_rows($sqllms) > 0){
 	}
 	echo'
     <tr style="font-size: 15px; border:2px solid #000;">
-        <th colspan="5">Total</th>
-        <th style="text-align: right;">'.number_format($grandTotal).'</th>
+        <th colspan="4" style="text-align: right;">Total</th>
+		<th style="text-align: right;">'.number_format($actualTotal).'</th>
         <th style="text-align: right;">'.number_format($totalConcessionScholarship).'</th>
+        <th style="text-align: right;">'.number_format($grandTotal).'</th>
         <th style="text-align: right;">'.number_format($totRemaining).'</th>
         <th style="text-align: right;">'.number_format($totFine).'</th>
         <th style="text-align: right;">'.number_format($totPayable).'</th>

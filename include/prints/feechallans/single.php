@@ -344,79 +344,88 @@ echo'
 							$qrCodeText = '';
 							$dynamicQrFilename = '';
 
-							$tokenParams = [
-								'username'      => BANKCO_USERNAME,
-								'password'      => BANKCO_PASSWORD,
-								'client_id'     => BANKCO_CLIENTID,
-								'client_secret' => BANKCO_CLIENTSECRET
-							];
+                                $expiryDate      = date('Y-m-d', strtotime($feercord['due_date'])) . ' 23:59:00';
 
-							$ch = curl_init(BANKCO_ACCESSTOKENURL);
-							curl_setopt_array($ch, [
-								CURLOPT_POST           => true,
-								CURLOPT_POSTFIELDS     => http_build_query($tokenParams),
-								CURLOPT_RETURNTRANSFER => true,
-								CURLOPT_TIMEOUT        => 30,
-								CURLOPT_SSL_VERIFYPEER => true
-							]);
+                                $consumerNumber  = $feercord['challan_no'];
+                                $consumerName    = $displayname;
+                                $amount          = $totalAmount;
+                                $currency        = 'PKR';
+                                $expiryDateTime  = $expiryDate;
+                                $result      = $mainclass->get_qrchallan($consumerNumber, $consumerName, $amount, $currency, $expiryDateTime);
+                                if ($result !== false && (date('Y-m-d H:i:s')<date('Y-m-d H:i:00', strtotime($result['expirydatetime']))) && $result['status'] != 1 ) {
+                                    $qrCodeText = $result['qrcode'];
+                                    $dynamicQrFilename = $PNG_WEB_DIR . 'raast_' . $feercord['challan_no'] . '_' . $feercord['id'] . '.png';
+                                    QRcode::png($qrCodeText, $dynamicQrFilename, 'H', 5, 2);
+                                } else {
 
-							$tokenResponse = curl_exec($ch);
-							curl_close($ch);
+                                    $payload = json_encode([
+                                          'consumerNumber'  => (int) $consumerNumber
+                                        , 'consumerName'    => $consumerName
+                                        , 'amount'          => (float) $amount
+                                        , 'currency'        => $currency
+                                        , 'expiryDateTime'  => $expiryDateTime
+                                    ]);
 
-							$tokenResponse = json_decode($tokenResponse, true);
+                                    // ---- 3. Call the API ----
+                                    $curl = curl_init();
 
-							if(isset($tokenResponse['access_token'])) {
+                                    curl_setopt_array($curl, [
+                                        CURLOPT_URL            => $qr['endpoint_url'],
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_ENCODING       => '',
+                                        CURLOPT_MAXREDIRS      => 10,
+                                        CURLOPT_TIMEOUT        => 30,
+                                        CURLOPT_FOLLOWLOCATION => true,
+                                        CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+                                        CURLOPT_CUSTOMREQUEST  => 'POST',
+                                        CURLOPT_POSTFIELDS     => $payload,
+                                        CURLOPT_HTTPHEADER     => [
+                                              'appId: ' . $qr['appid']
+                                            , 'secretKey: ' . $qr['secretkey']
+                                            , 'publicKey: ' . $qr['publickey']
+                                            , 'Content-Type: application/json'
+                                        ],
+                                    ]);
 
-								$expiryDateTime = date('d-m-Y 23:59:59', strtotime($feercord['due_date']));
+                                    $response = curl_exec($curl);
+                                    $curlError = curl_error($curl);
+                                    curl_close($curl);
 
-								$qrParams = [
-									'consumerNumber' => $feercord['challan_no'],
-									'consumerName'   => $displayname,
-									'amount'         => $totalAmount,
-									'currency'       => 'PKR',
-									"expiryDateTime" => $expiryDateTime
-								];
+                                    if ($response === false) {
+                                        $errorMessage = 'Request failed: ' . $curlError;
+                                    } else {
+                                        $data = json_decode($response, true);
 
+                                        if (!isset($data['code']) || $data['code'] != 200) {
+                                            $errorMessage = $data['message'] ?? 'Unknown error from payment gateway.';
+                                        } else {
+                                            $responsedata = ($data['responsedata']);
+                                            //echo  $responsedata;
 
-								$ch = curl_init(BANKCO_QRCODEURL);
-								curl_setopt_array($ch, [
-									CURLOPT_POST           => true,
-									CURLOPT_POSTFIELDS     => json_encode($qrParams),
-									CURLOPT_HTTPHEADER     => [
-										'Content-Type: application/json',
-										'Authorization: Bearer '.$tokenResponse['access_token']
-									],
-									CURLOPT_RETURNTRANSFER => true,
-									CURLOPT_TIMEOUT        => 30,
-									CURLOPT_SSL_VERIFYPEER => true
-								]);
+                                            $qrCodeText = $data['qrCode'];
+                                            $dynamicQrFilename = $PNG_WEB_DIR.'raast_'.$feercord['challan_no'].'_'.$feercord['id'].'.png';
+                                            QRcode::png($qrCodeText, $dynamicQrFilename, 'H', 5, 2);
+                                            $datalog = array (
+                                              'status'              => 2
+                                            , 'orderid'             => $responsedata['merchant']['orderid']
+                                            , 'billno'              => $responsedata['transaction']['billnumber']
+                                            , 'consumerno'          => $consumerNumber
+                                            , 'consumername'		=> $consumerName
+                                            , 'amount'	            => (float) $amount
+                                            , 'currency'	        => $currency
+                                            , 'expirydatetime'	    => $expiryDateTime
+                                            , 'qrcode'	            => $qrCodeText
+                                            , 'responsecode'	    => $responsedata['response']['code']
+                                            , 'rsponsemsg'	        => $responsedata['response']['description']
+                                            , 'responsedata'        => json_encode($responsedata)
+                                            , 'created_date'        => date('Y-m-d H:i:s')
+                                            );
+                                            $querylog = $dblms->Insert("cms_qrchallans", $datalog);
+                                        }
+                                    }
+                                }
+                            }
 
-
-								$qrResponse = curl_exec($ch);
-								curl_close($ch);
-
-								$qrResponse = json_decode($qrResponse, true);
-
-
-								if(isset($qrResponse['qrCode'])) {
-									$qrCodeText = $qrResponse['qrCode'];
-									$dynamicQrFilename = $PNG_WEB_DIR.'raast_'.$feercord['challan_no'].'_'.$feercord['id'].'.png';
-									QRcode::png($qrCodeText, $dynamicQrFilename, 'H', 5, 2);
-								}
-
-								$dataRaastqr = array(
-														 'status'		        => '2'
-														, 'challan_no'			=> $feercord['challan_no']
-														, 'QR_code'		        => $qrCodeText
-														, 'QR_id'		        => $qrResponse['qrid']
-														, 'detail'			    => $qrResponse['message']
-														, 'QR_response'			=> json_encode($qrResponse)
-														, 'QR_response_date'	=> date("Y-m-d H:i:s")											
-													);
-
-								$sqllmsInsert  = $dblms->Insert(RAAST_QR_DETAILS , $dataRaastqr);
-							}
-							}
 
 							echo '
 							<tr>
@@ -589,80 +598,89 @@ echo'
 							$totalAmount = (float)($feercord['total_amount']);
 						
                             if($ifee == 1) {
-							$qrCodeText = '';
-							$dynamicQrFilename = '';
+                                $qrCodeText = '';
+                                $dynamicQrFilename = '';
 
-							$tokenParams = [
-								'username'      => BANKCO_USERNAME,
-								'password'      => BANKCO_PASSWORD,
-								'client_id'     => BANKCO_CLIENTID,
-								'client_secret' => BANKCO_CLIENTSECRET
-							];
+                                $expiryDate      = date('Y-m-d', strtotime($feercord['due_date'])) . ' 23:59:00';
 
-							$ch = curl_init(BANKCO_ACCESSTOKENURL);
-							curl_setopt_array($ch, [
-								CURLOPT_POST           => true,
-								CURLOPT_POSTFIELDS     => http_build_query($tokenParams),
-								CURLOPT_RETURNTRANSFER => true,
-								CURLOPT_TIMEOUT        => 30,
-								CURLOPT_SSL_VERIFYPEER => true
-							]);
+                                $consumerNumber  = $feercord['challan_no'];
+                                $consumerName    = $displayname;
+                                $amount          = $totalAmount;
+                                $currency        = 'PKR';
+                                $expiryDateTime  = $expiryDate;
+                                $result      = $mainclass->get_qrchallan($consumerNumber, $consumerName, $amount, $currency, $expiryDateTime);
+                                if ($result !== false && (date('Y-m-d H:i:s')<date('Y-m-d H:i:00', strtotime($result['expirydatetime']))) && $result['status'] != 1 ) {
+                                    $qrCodeText = $result['qrCode'];
+                                    $dynamicQrFilename = $PNG_WEB_DIR . 'raast_' . $feercord['challan_no'] . '_' . $feercord['id'] . '.png';
+                                    QRcode::png($qrCodeText, $dynamicQrFilename, 'H', 5, 2);
+                                } else {
 
-							$tokenResponse = curl_exec($ch);
-							curl_close($ch);
+                                    $payload = json_encode([
+                                          'consumerNumber'   => (int) $consumerNumber
+                                        , 'consumerName'    => $consumerName
+                                        , 'amount'          => (float) $amount
+                                        , 'currency'        => $currency
+                                        , 'expiryDateTime'  => $expiryDateTime
+                                    ]);
 
-							$tokenResponse = json_decode($tokenResponse, true);
+                                    // ---- 3. Call the API ----
+                                    $curl = curl_init();
 
-							if(isset($tokenResponse['access_token']) ) {
+                                    curl_setopt_array($curl, [
+                                        CURLOPT_URL            => $qr['endpoint_url'],
+                                        CURLOPT_RETURNTRANSFER => true,
+                                        CURLOPT_ENCODING       => '',
+                                        CURLOPT_MAXREDIRS      => 10,
+                                        CURLOPT_TIMEOUT        => 30,
+                                        CURLOPT_FOLLOWLOCATION => true,
+                                        CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+                                        CURLOPT_CUSTOMREQUEST  => 'POST',
+                                        CURLOPT_POSTFIELDS     => $payload,
+                                        CURLOPT_HTTPHEADER     => [
+                                            'appId: ' . $qr['appid']
+                                            , 'secretKey: ' . $qr['secretkey']
+                                            , 'publicKey: ' . $qr['publickey']
+                                            , 'Content-Type: application/json'
+                                        ],
+                                    ]);
 
-								$expiryDateTime = date('d-m-Y 23:59:59', strtotime($feercord['due_date']));
+                                    $response = curl_exec($curl);
+                                    $curlError = curl_error($curl);
+                                    curl_close($curl);
 
-								$qrParams = [
-									'consumerNumber' => $feercord['challan_no'],
-									'consumerName'   => $displayname,
-									'amount'         => $totalAmount,
-									'currency'       => 'PKR',
-									"expiryDateTime" => $expiryDateTime
-								];
+                                    if ($response === false) {
+                                        $errorMessage = 'Request failed: ' . $curlError;
+                                    } else {
+                                        $data = json_decode($response, true);
 
-								$ch = curl_init(BANKCO_QRCODEURL);
-								curl_setopt_array($ch, [
-									CURLOPT_POST           => true,
-									CURLOPT_POSTFIELDS     => json_encode($qrParams),
-									CURLOPT_HTTPHEADER     => [
-										'Content-Type: application/json',
-										'Authorization: Bearer '.$tokenResponse['access_token']
-									],
-									CURLOPT_RETURNTRANSFER => true,
-									CURLOPT_TIMEOUT        => 30,
-									CURLOPT_SSL_VERIFYPEER => true
-								]);
+                                        if (!isset($data['code']) || $data['code'] != 200) {
+                                            $errorMessage = $data['message'] ?? 'Unknown error from payment gateway.';
+                                        } else {
+                                            $responsedata = ($data['responsedata']);
+                                            //echo  $responsedata;
 
-
-								$qrResponse = curl_exec($ch);
-								curl_close($ch);
-
-								$qrResponse = json_decode($qrResponse, true);
-
-
-								if(isset($qrResponse['qrCode'])) {
-									$qrCodeText = $qrResponse['qrCode'];
-									$dynamicQrFilename = $PNG_WEB_DIR.'raast_'.$feercord['challan_no'].'_'.$feercord['id'].'.png';
-									QRcode::png($qrCodeText, $dynamicQrFilename, 'H', 5, 2);
-								}
-
-								$dataRaastqr = array(
-														'status'		        => '2'
-														, 'challan_no'			=> $feercord['challan_no']
-														, 'QR_code'		        => $qrCodeText
-														, 'QR_id'		        => $qrResponse['qrid']
-														, 'detail'			    => $qrResponse['message']
-														, 'QR_response'			=> json_encode($qrResponse)
-														, 'QR_response_date'	=> date("Y-m-d H:i:s")											
-													);
-
-								$sqllmsInsert  = $dblms->Insert(RAAST_QR_DETAILS , $dataRaastqr);
-							}
+                                            $qrCodeText = $data['qrCode'];
+                                            $dynamicQrFilename = $PNG_WEB_DIR.'raast_'.$feercord['challan_no'].'_'.$feercord['id'].'.png';
+                                            QRcode::png($qrCodeText, $dynamicQrFilename, 'H', 5, 2);
+                                            $datalog = array (
+                                                'status'              => 2
+                                            , 'orderid'             => $responsedata['merchant']['orderid']
+                                            , 'billno'              => $responsedata['transaction']['billnumber']
+                                            , 'consumerno'          => $consumerNumber
+                                            , 'consumername'		=> $consumerName
+                                            , 'amount'	            => (float) $amount
+                                            , 'currency'	        => $currency
+                                            , 'expirydatetime'	    => $expiryDateTime
+                                            , 'qrcode'	            => $qrCodeText
+                                            , 'responsecode'	    => $responsedata['response']['code']
+                                            , 'rsponsemsg'	        => $responsedata['response']['description']
+                                            , 'responsedata'        => json_encode($responsedata)
+                                            , 'created_date'        => date('Y-m-d H:i:s')
+                                            );
+                                            $querylog = $dblms->Insert("cms_qrchallans", $datalog);
+                                        }
+                                    }
+                                }
 							}
 							echo '
 							

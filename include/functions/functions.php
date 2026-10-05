@@ -1271,41 +1271,39 @@ function sendWhatsAppMessage($senderurl, $apikey, $sender, $number, $message) {
 
     return $result;
 }
-// function sendWhatsAppMessage($senderurl, $apikey, $sender, $number, $message)
-// {
-//     $curl = curl_init();
 
-//     $url = rtrim($senderurl, '/') . '?' . http_build_query([
-//         'api_key' => $apikey,
-//         'sender'  => $sender,
-//         'number'  => $number,
-//         'message' => $message
-//     ]);
+function get_whatsappMsgStatus($id = null) {
+	$listadmstatus = array(
+		'0' => 'Pending',
+		'1' => 'Sent',
+		'3' => 'Rejected'
+	);
+	if ($id === null) {
+		return $listadmstatus;
+	}else{
+		$listadmstatus= array (
+								'0' => '<span class="label label-warning">Pending</span>',
+								'1' => '<span class="label label-success">Sent</span>',
+								'3' => '<span class="label label-danger">Rejected</span>'
+							);
+		return $listadmstatus[$id];
+	}
+}
 
-//     curl_setopt_array($curl, [
-//         CURLOPT_URL            => $url,
-//         CURLOPT_RETURNTRANSFER => true,
-//         CURLOPT_HTTPGET        => true,
-//         CURLOPT_TIMEOUT        => 30,
-//         CURLOPT_FOLLOWLOCATION => false,
-//         CURLOPT_HEADER         => false,
-//         CURLOPT_HTTPHEADER     => [
-//             'Accept: application/json',
-//         ],
-//     ]);
-
-//     $response = curl_exec($curl);
-
-//     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-//     $curlError = curl_error($curl);
-
-//     curl_close($curl);
-
-//     return [
-//         'success'   => ($response !== false && $httpCode >= 200 && $httpCode < 300),
-//         'http_code' => $httpCode,
-//         'response'  => $response,
-//         'error'     => $curlError ?: null,
-//         'url'       => $url
-//     ];
-// } 
+function get_whatsappMsgType($id = null) {
+	$listadmstatus = array(
+		'0' => 'Fee Challan',
+		'1' => 'Reminder',
+		'3' => 'Paid'
+	);
+	if ($id === null) {
+		return $listadmstatus;
+	}else{
+		$listadmstatus= array (
+								'0' => '<span class="label label-info">Fee Challan</span>',
+								'1' => '<span class="label label-warning">Reminder</span>',
+								'3' => '<span class="label label-success">Paid</span>'
+							);
+		return $listadmstatus[$id];
+	}
+}

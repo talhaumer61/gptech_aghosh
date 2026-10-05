@@ -85,30 +85,30 @@ if(isset($_POST['id_std']) && isset($_POST['yearmonth'])){
                 
                      
                 //----------------- Remaining Amount ------------------
-                // $sqllms_rem = $dblms->querylms("SELECT remaining_amount, total_amount, paid_amount, challan_no
-                //                                     FROM ".FEES." 
-                //                                     WHERE id_std = '".cleanvars($id_std)."'
-                //                                     AND is_deleted != '1'
-                //                                     ORDER BY id DESC LIMIT 1");
-                // if(mysqli_num_rows($sqllms_rem) > 0){
-                //     $row_rem        = mysqli_fetch_array($sqllms_rem);
-                //     if($row_rem['total_amount']>$row_rem['paid_amount']){
-                //         $rem_challan    = $row_rem['challan_no'];
-                //         // $rem_amount     = $row_rem['remaining_amount'];
-                //         $rem_amount     = $row_rem['total_amount'] - $row_rem['paid_amount'];
-                //         $rem_fine       = 300;
-                //         $allowEdit      = ""; 
-                //     }else{
-                //         $rem_amount     = 0;
-                //         $rem_fine       = 0;
-                //         $rem_challan    = "";
-                //         $allowEdit      = "";
-                //     }
-                // }
+                $sqllms_rem = $dblms->querylms("SELECT remaining_amount, total_amount, paid_amount, challan_no
+                                                    FROM ".FEES." 
+                                                    WHERE id_std = '".cleanvars($id_std)."'  AND id_type = '1' 
+                                                    AND is_deleted != '1'
+                                                    ORDER BY id DESC LIMIT 1");
+                if(mysqli_num_rows($sqllms_rem) > 0){
+                    $row_rem        = mysqli_fetch_array($sqllms_rem);
+                    if($row_rem['total_amount']>$row_rem['paid_amount']){
+                        $rem_challan    = $row_rem['challan_no'];
+                        $rem_amount     = $row_rem['remaining_amount'];
+                        // $rem_amount     = $row_rem['total_amount'] - $row_rem['paid_amount'];
+                        $rem_fine       = 300;
+                        $allowEdit      = ""; 
+                    }else{
+                        $rem_amount     = 0;
+                        $rem_fine       = 0;
+                        $rem_challan    = "";
+                        $allowEdit      = "";
+                    }
+                }
 				$prev_challans  =   0;
-                $rem_amount     = 0;
-                $rem_fine       = 0;
-                $rem_challan    = "";
+                // $rem_amount     = 0;
+                // $rem_fine       = 0;
+                // $rem_challan    = "";
                 $allowEdit      = "";
 
 

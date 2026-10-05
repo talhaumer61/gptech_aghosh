@@ -238,7 +238,7 @@ if(($_SESSION['userlogininfo']['LOGINTYPE'] == 1) || Stdlib_Array::multiSearch($
                                                                                 FROM ".CLASSES." 
                                                                                 WHERE class_status = '1'
                                                                                 AND is_deleted != '1'
-                                                                                ORDER BY class_id ASC"
+                                                                                ORDER BY class_ordering ASC"
                                                                             );
                                                 while($valuecls = mysqli_fetch_array($sqllmscls)) {
                                                     echo '<option value="'.$valuecls['class_id'].'"'; if(in_array($valuecls['class_id'], $class)){ echo'selected';} echo'>'.$valuecls['class_name'].'</option>';

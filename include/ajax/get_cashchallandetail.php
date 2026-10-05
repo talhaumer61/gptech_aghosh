@@ -24,7 +24,7 @@ if(isset($_POST['challano'])){
 								   LEFT JOIN ".STUDENTS." st ON st.std_id 	 = f.id_std 
 								   LEFT JOIN ".ADMISSIONS_INQUIRY." q ON q.form_no = f.inquiry_formno
 								   WHERE f.id_campus = '".$_SESSION['userlogininfo']['LOGINCAMPUS']."'
-								   AND f.challan_no = '".cleanvars(trim($challano))."'
+								   AND f.challan_no = '".cleanvars(trim($challano))."' AMD f.is_deleted = '0'
 								   ORDER BY f.challan_no DESC");
 	$rowsvalues = mysqli_fetch_array($sqllms);
 	if($rowsvalues){

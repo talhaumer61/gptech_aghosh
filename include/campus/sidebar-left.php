@@ -1158,6 +1158,9 @@ echo '
 				<li class=" ">
 					<a href="notifications.php"><i class="fa fa-bell"></i><span>Notifications</span></a>
 				</li>
+				<li class=" ">
+					<a href="whatsapp_log.php"><i class="fa fa-whatsapp"></i><span>Whatsapp Logs</span></a>
+				</li>
 				<!-- NOTIFICATIONS END -->';
 			}
 			if(($_SESSION['userlogininfo']['LOGINTYPE']  == 1) || ($_SESSION['userlogininfo']['LOGINTYPE']  == 2) || Stdlib_Array::multiSearch($_SESSION['userroles'], array('right_name' => '45', 'view' => '1')) || Stdlib_Array::multiSearch($_SESSION['userroles'], array('right_name' => '86', 'view' => '1')) || Stdlib_Array::multiSearch($_SESSION['userroles'], array('right_name' => '87', 'view' => '1')) || Stdlib_Array::multiSearch($_SESSION['userroles'], array('right_name' => '88', 'view' => '1'))){

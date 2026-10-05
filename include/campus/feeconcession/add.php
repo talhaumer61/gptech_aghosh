@@ -28,11 +28,11 @@ echo'
 	<div class="col-sm-5">
 		<div class="form-group">
 			<label class="control-label" style="font-weight:600;color:#333;">Class <span class="required">*</span></label>
-			<select class="form-control" required title="Must Be Required" data-plugin-selectTwo data-width="100%" data-minimum-results-for-search="Infinity" id="id_class" name="id_class" onchange="get_classstudent(this.value)">
+			<select class="form-control" required title="Must Be Required" data-plugin-selectTwo data-width="100%" id="id_class" name="id_class" onchange="get_classstudent(this.value)">
 				<option value="">Select</option>';
 							$sqllmsclass	= $dblms->querylms("SELECT class_id, class_name 
 																	FROM ".CLASSES." 
-																	WHERE class_status = '1' ORDER BY class_id ASC");
+																	WHERE class_status = '1' ORDER BY class_ordering ASC");
 							while($value_class 	= mysqli_fetch_array($sqllmsclass)) {
 							echo '<option value="'.$value_class['class_id'].'">'.$value_class['class_name'].'</option>';
 							}
